@@ -2,7 +2,8 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "sui-ai-commons",
   "owner": {
-    "name": "AlphaFiTech"
+    "name": "Pankaj Jangid",
+    "url": "https://github.com/jangid"
   },
   "renames": {
     "sui-move-auditor": "open-agents",

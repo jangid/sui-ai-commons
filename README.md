@@ -17,9 +17,11 @@ All components ship inside the single umbrella plugin `sui-ai` and surface under
 From any Claude Code session:
 
 ```
-/plugin marketplace add AlphaFiTech/sui-ai-commons
+/plugin marketplace add jangid/sui-ai-commons
 /plugin install sui-ai@sui-ai-commons
 ```
+
+The repository moved from `AlphaFiTech/sui-ai-commons` to `jangid/sui-ai-commons` on 2026-09-24. GitHub redirects the old slug, so marketplaces already registered under `AlphaFiTech/sui-ai-commons` keep receiving updates; no action is needed for existing installs.
 
 ## Usage
 

@@ -26,6 +26,8 @@ Any change to plugin content — any agent's, and in future any skill's or tool'
 
 This repository was renamed from `AlphaFiTech/open-agents` to `AlphaFiTech/sui-ai-commons` (and the umbrella plugin `open-agents` → `sui-ai` — recorded in the append-only `renames` map above). A repository named `AlphaFiTech/open-agents` must **never be created**: GitHub's rename redirect — which keeps old links and any legacy plugin registrations working — dies the moment the old name is reused.
 
+On 2026-09-24 the repository was transferred from the `AlphaFiTech` organization to the personal account `jangid` (`jangid/sui-ai-commons`). The same rule applies to the vacated slug: a repository named `AlphaFiTech/sui-ai-commons` must **never be created**, or the transfer redirect (and every marketplace registration still pointing at the old slug) breaks.
+
 ## Rulesets note
 
-AlphaFiTech's standard branch rulesets are applied to this repository (since 2026-08-18): changes to `main` go through a pull request, and new branches must use a `feature/`, `bugfix/`, `hotfix/`, or `chore/` prefix. Open PRs from a prefix-compliant branch; maintainers merge after review (repository admins may complete a merge when no second reviewer is available).
+The AlphaFiTech organization rulesets that applied here from 2026-08-18 did not carry over with the 2026-09-24 transfer, so `main` is not currently protected by GitHub. The same workflow is kept by convention: changes to `main` go through a pull request, and new branches use a `feature/`, `bugfix/`, `hotfix/`, or `chore/` prefix. Open PRs from a prefix-compliant branch; the maintainer merges after review.
