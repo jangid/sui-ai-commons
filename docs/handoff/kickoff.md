@@ -110,5 +110,13 @@ artifact can cite a repository-resident source.
    form. The existing table and 8B list are rewritten to that form in this cycle.
    (Taken at the specs gate, 2026-10-30; REQ-REL-002 stands as written.)
 
+10. **Branching**: the cycle's commits stay on `main` and `main` is pushed directly at
+    DONE; no feature branch or PR for this cycle. Plan gates phrased "against `main`" are
+    read against the pre-cycle commit `ba39b14` (= `origin/main` before the push). Taken at
+    the implement-stage gate, 2026-10-30; the CONTRIBUTING PR convention is waived for this
+    cycle by the maintainer.
+11. **Red team**: ON for the verify stage (read-only adversarial pass after each verify
+    return). Taken at the implement-stage gate, 2026-10-30.
+
 Earlier, pre-gate decisions: skip the brainstorming questions; keep a list of sources in
 this repository; this cycle will be rerun periodically.
