@@ -1,0 +1,7 @@
+[package]
+name = "c08_oracle_ratio_feed_misconfig"
+edition = "2024"
+# No published address line on purpose: fixtures are never published (see fixtures.md Q-IMPL-003)
+
+[addresses]
+c08_oracle_ratio_feed_misconfig = "0x0"

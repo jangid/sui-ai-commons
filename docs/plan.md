@@ -522,25 +522,25 @@ per fixture directory `$d`: `(cd "$d" && awk '/^```/{c=!c; next} !c && /^#/' REA
 **Goal**: Three more fixtures (lending/oracle classes) compile clean with contract READMEs.
 **Depends on**: Chunk 0. May run in parallel with Chunks 2–6.
 **Tasks**:
-1. [implement] Create `tests/fixtures/c07-thin-collateral-recursive-borrow`: collateral listing
+1. [x] [implement] Create `tests/fixtures/c07-thin-collateral-recursive-borrow`: collateral listing
    with no supply/borrow cap; `borrow` + `supply` of the same asset callable in one PTB with no
    per-asset loop bound; oracle adapter accepting a single last-trade price; permissionless
    `refresh_price` with no deviation gate; README whose `## Requirements` section spells out
    `CHK-C7-1`, `CHK-C7-2`, `CHK-C7-3`, `CHK-C7-4` individually; clean build; `Move.lock` —
    traces to fixtures.md §Class-slug list row c07; AC-5 (CHK-C7-1..4)
-2. [implement] Create `tests/fixtures/c08-oracle-ratio-feed-misconfig`: a ratio (LST/base) feed
+2. [x] [implement] Create `tests/fixtures/c08-oracle-ratio-feed-misconfig`: a ratio (LST/base) feed
    consumed as a USD price; `set_feed` with no sanity band; growth-cap setter updating `ratio`
    without `ratio_timestamp`; README spelling out `CHK-C8-1`, `CHK-C8-2`, `CHK-C8-3`
    individually; clean build; `Move.lock` — traces to
    fixtures.md §Class-slug list row c08; AC-5 (CHK-C8-1..3)
-3. [implement] Create `tests/fixtures/c09-oracle-authority-unpinned`: consumer stores only an
+3. [x] [implement] Create `tests/fixtures/c09-oracle-authority-unpinned`: consumer stores only an
    aggregator object reference (local stand-in struct with `authority`, `queue`, `price`,
    `timestamp` fields), never pins `object::id` or the expected queue/authority, accepts any
    single update with no per-update move bound; deposit and withdraw priced by the same feed
    with no cooldown; README spelling out `CHK-C9-1`, `CHK-C9-2`, `CHK-C9-3`, `CHK-C9-4`
    individually and noting the S-1 outcome (the fixture violates under either); clean build; `Move.lock` — traces to fixtures.md §Class-slug list row c09;
    AC-5 (CHK-C9-1..4); coverage-checks.md §C9 Spike S-1 fallback paragraph
-4. [verify] Same per-directory checks as Chunk 6 task 4 for these three directories — traces to
+4. [x] [verify] Same per-directory checks as Chunk 6 task 4 for these three directories — traces to
    fixtures.md §each_fixture_has_move_toml_lock_readme_sources,
    move_toml_has_no_published_at_and_edition_2024, dependency_variant_uniform,
    readme_headings_fixed, readme_cites_valid_ids; AC-1, AC-2, AC-3

@@ -1,0 +1,7 @@
+[package]
+name = "c09_oracle_authority_unpinned"
+edition = "2024"
+# No published address line on purpose: fixtures are never published (see fixtures.md Q-IMPL-003)
+
+[addresses]
+c09_oracle_authority_unpinned = "0x0"
