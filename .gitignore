@@ -1,2 +1,3 @@
 .sdd/
 .claude/worktrees/
+tests/fixtures/*/build/
