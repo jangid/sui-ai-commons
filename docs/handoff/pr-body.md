@@ -57,7 +57,7 @@ bullet's lead-in as it appears in the tree (`$D` = `plugins/sui-ai/agents/sui-mo
 | CHK-C9-2 | `$P/sui-native-pitfalls.md` | `## Oracle integrations (Pyth / Switchboard / custom feeds)` | **Minimum oracle count and per-update move bound.** |
 | CHK-C9-3 | `$P/sui-native-pitfalls.md` | `## Oracle integrations (Pyth / Switchboard / custom feeds)` | **Oracle-priced round trip within one staleness window.** |
 | CHK-C9-4 | `$P/sui-native-pitfalls.md` | `## Oracle integrations (Pyth / Switchboard / custom feeds)` | **Signed keeper reports carry a plausibility bound.** |
-| CHK-C11-0 | `$D` | `### 6.8 Governance, Voting & Weight Safety` | trigger line (`propose|vote|cast|quorum|execute_proposal|timelock`) … record each outcome individually |
+| CHK-C11-0 | `$D` | `### 6.8 Governance, Voting & Weight Safety` | trigger line (`propose\|vote\|cast\|quorum\|execute_proposal\|timelock`) … record each outcome individually |
 | CHK-C11-1 | `$D` | `### 6.8 Governance, Voting & Weight Safety` | **Voting power read from a snapshot taken strictly before proposal creation** |
 | CHK-C11-2 | `$D` | `### 6.8 Governance, Voting & Weight Safety` | **Quorum floor > 0, relative to total voting supply, and proposer threshold > 0:** |
 | CHK-C11-3 | `$D` | `### 6.8 Governance, Voting & Weight Safety` | **Execution delay with veto:** |
