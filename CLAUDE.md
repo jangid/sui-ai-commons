@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A Claude Code **plugin marketplace** (`jangid/sui-ai-commons`) that ships a single umbrella plugin, `sui-ai`, for Sui development. There is no application code, build system, or test suite: the content is Markdown agent definitions plus two JSON manifests. "Testing" a change means installing the plugin in a Claude Code session pointed at a Sui Move project and running the agent.
+A Claude Code **plugin marketplace** (`jangid/sui-ai-commons`) that ships a single umbrella plugin, `sui-ai`, for Sui development. There is no application code, build system, or test suite: the content is Markdown agent definitions plus two JSON manifests. The one exception is `tests/fixtures/` — compile-only acceptance fixtures for auditor checks (minimal vulnerable Sui Move packages, one per gap class, built with `sui move build`); they are not a test suite of the plugin and never bump its version. "Testing" a change means installing the plugin in a Claude Code session pointed at a Sui Move project and running the agent.
 
 ## Commands
 
@@ -14,6 +14,10 @@ There is no build, lint, or test step. The relevant operations are:
 # Validate the two manifests parse
 python3 -m json.tool .claude-plugin/marketplace.json
 python3 -m json.tool plugins/sui-ai/.claude-plugin/plugin.json
+
+# Build every acceptance fixture under tests/fixtures/ (compile-only; exit 0 = all clean,
+# any build failure or warning/error line in any fixture fails the loop)
+rc=0; for d in tests/fixtures/*/; do out=$(cd "$d" && sui move build 2>&1) || rc=1; grep -qiE '^(warning|error)' <<<"$out" && rc=1; done; exit $rc
 
 # Install / exercise the plugin from any Claude Code session (see README)
 /plugin marketplace add jangid/sui-ai-commons
@@ -29,9 +33,11 @@ Then invoke `sui-ai:sui-move-auditor` from a session whose cwd is the Sui Move p
 plugins/sui-ai/.claude-plugin/plugin.json   # umbrella plugin manifest: name, VERSION, description
 plugins/sui-ai/agents/sui-move-auditor.md   # the agent "driver" (frontmatter + 11-phase audit procedure)
 plugins/sui-ai/agents/sui-move-auditor/*.md # companion "playbooks" the driver loads on demand
+docs/exploit-sources.md                # ranked exploit/advisory sources + rerun procedure for the coverage refresh
+tests/fixtures/<class-slug>/           # compile-only vulnerable Move fixtures, one per auditor gap class
 ```
 
-- **Driver + playbooks.** `sui-move-auditor.md` is the agent definition Claude Code loads. It is structured as sequential phases (context gathering, actor/threat model, fund security, spec-to-code, accounting invariants, Sui Move checklist, structural attacks, archetype playbooks, severity report, testing, scorecard) followed by a report template. Deep domain content lives in the companion directory and is pulled in by the driver's "COMPANION REFERENCES" table only when the audit target matches (vaults, AMM, lending, staking, Sui-native pitfalls). `verification-and-false-positives.md` is the exception: the driver always loads it before finalizing findings, because it holds the evidence gates and confidence tiers that cap severity.
+- **Driver + playbooks.** `sui-move-auditor.md` is the agent definition Claude Code loads. It is structured as sequential phases (context gathering, actor/threat model, fund security, spec-to-code, accounting invariants, Sui Move checklist, structural attacks, archetype playbooks, severity report, testing, scorecard) followed by a report template. Deep domain content lives in the companion directory and is pulled in by the driver's "COMPANION REFERENCES" table only when the audit target matches (vaults, AMM, lending, perps/margin, staking, Sui-native pitfalls). `verification-and-false-positives.md` is the exception: the driver always loads it before finalizing findings, because it holds the evidence gates and confidence tiers that cap severity.
 - **Companion references must use `${CLAUDE_PLUGIN_ROOT}`.** The installed plugin is a cached copy, so the driver addresses its playbooks as `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/<file>.md`, never by relative or repo path. Keep this pattern for any new agent with a companion dir.
 - **Namespacing.** Everything in the umbrella surfaces as `sui-ai:<component>`. New components of any type go inside `plugins/sui-ai/`, never as a sibling `plugins/<name>/`.
 

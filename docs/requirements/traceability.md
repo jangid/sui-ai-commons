@@ -13,7 +13,7 @@ fills Verified.
 | REQ-COV-002 | coverage-checks.md | | | |
 | REQ-COV-003 | coverage-checks.md | catalog_rows_added | verification-and-false-positives.md §Move-specific false-positive catalog (4 rows) | |
 | REQ-COV-004 | coverage-checks.md | | | |
-| REQ-COV-005 | coverage-checks.md | | | |
+| REQ-COV-005 | coverage-checks.md | per-class content checks (c3_bullets_in_5_3a, c6_three_items_in_6_14, c7_in_market_creation, c7_c8_in_oracle_staleness, c7_4_refresh_in_7_2, c9_section_and_table, c11_trigger_and_five_items, c12_three_bullets, c19_step_10, pb1..pb5), companion_table_row_present, phase_8b_row_names_both | C3 → sui-move-auditor.md §5.3a; C6 → §6.14; C11 → §6.8; CHK-C7-4 → §7.2; C19 → §PHASE 1 step 10; C7/C8 → defi-lending-and-liquidation.md §Market creation & configuration validation, §Oracle staleness & price representability; C9 → sui-native-pitfalls.md §Oracle integrations; C12 → §Cross-chain / bridge / ZK; perps/C20 → defi-perps-and-margin.md (wired via §COMPANION REFERENCES + §PHASE 8B) | |
 | REQ-COV-006 | coverage-checks.md | c3_bullets_in_5_3a | sui-move-auditor.md §5.3a High-signal correctness greps — Raw-bits stored, signed-read | |
 | REQ-COV-007 | coverage-checks.md | c3_bullets_in_5_3a | sui-move-auditor.md §5.3a High-signal correctness greps — Validation at the write boundary | |
 | REQ-COV-008 | coverage-checks.md | c3_bullets_in_5_3a | sui-move-auditor.md §5.3a High-signal correctness greps — Caps compared in the consuming domain | |
@@ -41,29 +41,29 @@ fills Verified.
 | REQ-COV-030 | coverage-checks.md | c12_three_bullets | sui-native-pitfalls.md §Cross-chain / bridge / ZK — Replay protection beyond a nonce | |
 | REQ-COV-031 | coverage-checks.md | c12_three_bullets | sui-native-pitfalls.md §Cross-chain / bridge / ZK — Refund never exceeds deposit; failed callbacks are inert | |
 | REQ-COV-032 | perps-playbook.md | playbook_file_exists_in_companion_dir, load_when_opener_states_dual_load, six_fixed_headings_present_in_order, preamble_states_cap, known_good_section_present | defi-perps-and-margin.md (whole file: title, opener, preamble, six headings, known-good section) | |
-| REQ-COV-033 | perps-playbook.md | load_when_opener_states_dual_load, no_bare_companion_mention_perps, lending_margin_content_untouched (companion_table_row_present, phase_8b_row_names_both — Chunk 5) | defi-perps-and-margin.md opener (dual-load sentence); driver companion table + Phase 8B row — Chunk 5, open | |
+| REQ-COV-033 | perps-playbook.md | load_when_opener_states_dual_load, no_bare_companion_mention_perps, lending_margin_content_untouched, companion_table_row_present, phase_8b_row_names_both | defi-perps-and-margin.md opener (dual-load sentence); sui-move-auditor.md §COMPANION REFERENCES (perps row + lending-row suffix) and §PHASE 8B Lending / margin row | |
 | REQ-COV-034 | perps-playbook.md | pb1_settle_first | defi-perps-and-margin.md §Funding settlement ordering | |
 | REQ-COV-035 | perps-playbook.md | pb2_window_named | defi-perps-and-margin.md §Funding-rate updates: permissioned or bounded | |
 | REQ-COV-036 | perps-playbook.md | pb3_owner_not_account | defi-perps-and-margin.md §Self-trade and mark-price manipulation on thin books | |
 | REQ-COV-037 | perps-playbook.md | pb4_transition | defi-perps-and-margin.md §Risk-parameter changes and open positions | |
 | REQ-COV-038 | perps-playbook.md | pb5_points_to_driver | defi-perps-and-margin.md §Fees, funding and collateral deltas as signed-value sinks | |
 | REQ-COV-039 | coverage-checks.md | c19_step_10 | sui-move-auditor.md §PHASE 1 — CONTEXT GATHERING, step 10 | |
-| REQ-COV-040 | coverage-checks.md | | | |
+| REQ-COV-040 | coverage-checks.md | every coverage-checks.md / perps-playbook.md `### Automated` content check (grep-decidable, no auditor run) | each CHK-*/PB-* at its cited file → heading (rows REQ-COV-006..039 above); landing spots per coverage-checks.md §Class inventory and perps-playbook.md §File and load trigger | |
 | REQ-COV-041 | fixtures.md | | | |
 | REQ-COV-042 | fixtures.md | | | |
-| REQ-REL-001 | release-wiring.md | | | |
-| REQ-REL-002 | release-wiring.md | | | |
-| REQ-REL-003 | release-wiring.md | | | |
-| REQ-REL-004 | release-wiring.md | | | |
-| REQ-REL-005 | release-wiring.md | | | |
-| REQ-REL-006 | release-wiring.md | | | |
+| REQ-REL-001 | release-wiring.md | version_is_2_3_0 (bump_commit_subject_names_version, bump_and_content_same_commit at the orchestrator commit) | plugins/sui-ai/.claude-plugin/plugin.json `version` 2.3.0 | |
+| REQ-REL-002 | release-wiring.md | companion_table_row_present, companion_table_all_full_path, no_bare_companion_mention, plugin_root_prefix_present | sui-move-auditor.md §COMPANION REFERENCES (seven full-path rows) + §PHASE 8B + in-text mentions | |
+| REQ-REL-003 | release-wiring.md | no_relative_or_repo_paths_in_plugin, no_bare_companion_mention | sui-move-auditor.md §COMPANION REFERENCES, §PHASE 8B, in-text `${CLAUDE_PLUGIN_ROOT}` mentions | |
+| REQ-REL-004 | release-wiring.md | no_sibling_plugin_dir, playbook_in_companion_dir, no_agents_or_commands_field | plugins/sui-ai/agents/sui-move-auditor/defi-perps-and-margin.md placement; plugin.json (no agents/commands key) | |
+| REQ-REL-005 | release-wiring.md | manifests_parse | plugins/sui-ai/.claude-plugin/plugin.json (version-only edit); .claude-plugin/marketplace.json (untouched) | |
+| REQ-REL-006 | release-wiring.md | marketplace_unchanged | .claude-plugin/marketplace.json — not modified (`renames` byte-identical) | |
 | REQ-REL-007 [Deprecated] | | | | |
-| REQ-REL-008 | release-wiring.md | | | |
-| REQ-REL-009 | release-wiring.md | | | |
-| REQ-REL-010 | release-wiring.md | | | |
-| REQ-REL-011 | release-wiring.md | | | |
-| REQ-REL-012 | release-wiring.md | | | |
-| REQ-REL-013 | release-wiring.md | | | |
+| REQ-REL-008 | release-wiring.md | five_enumeration_sites_updated, claude_md_mentions_fixtures_and_sources | sui-move-auditor.md frontmatter `description`, §COMPANION REFERENCES, §PHASE 8B, §Appendix C item 8; CLAUDE.md §Layout and how the pieces connect | |
+| REQ-REL-009 | release-wiring.md | branch_prefix, pr_exists_to_main_with_rationale_table (orchestrator / PR stage) | process — `feature/` branch + PR to `main` per release-wiring.md §Branch and PR (orchestrator-owned) | |
+| REQ-REL-010 | release-wiring.md | pr_exists_to_main_with_rationale_table (PR stage) | PR body §Audit-behaviour rationale per check, per release-wiring.md §Branch and PR (orchestrator-owned) | |
+| REQ-REL-011 | release-wiring.md | bump_commit_subject_names_version (orchestrator commit) | commit subject `feat(sui-move-auditor): … (v2.3.0)` on the commit carrying plugin.json (orchestrator-owned) | |
+| REQ-REL-012 | release-wiring.md | version_is_2_3_0 | plugins/sui-ai/.claude-plugin/plugin.json — minor bump 2.2.0 → 2.3.0 (release-wiring.md §Version) | |
+| REQ-REL-013 | release-wiring.md | sui_native_load_condition_mentions_oracle, companion_table_row_present, c7_4_refresh_in_7_2 | sui-move-auditor.md §COMPANION REFERENCES (sui-native-pitfalls row + oracle; perps row), §7.2 CHK-C7-4; landing spots per coverage-checks.md §Class inventory / perps-playbook.md §File and load trigger | |
 | REQ-SRC-001 | exploit-sources.md | sources_file_exists_outside_plugins | docs/exploit-sources.md (repo-level file) | |
 | REQ-SRC-002 | exploit-sources.md | every_source_has_full_field_block | docs/exploit-sources.md §Sources (ranked) | |
 | REQ-SRC-003 | exploit-sources.md | last_checked_is_date_or_never | docs/exploit-sources.md §Sources (ranked) `Last checked` | |

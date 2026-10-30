@@ -419,7 +419,7 @@ oracle load condition; all five enumeration sites agree; `no_bare_companion_ment
 across the corpus; `plugin.json` is `2.3.0`. This is the LAST plugin-content chunk.
 **Depends on**: Chunk 2, Chunk 3, Chunk 4.
 **Tasks**:
-1. [implement] COMPANION REFERENCES table in `$D`: rewrite all six existing first-column cells
+1. [x] [implement] COMPANION REFERENCES table in `$D`: rewrite all six existing first-column cells
    to `` `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/<file>.md` ``; insert the perps row
    (exact text from perps-playbook.md §File and load trigger) after the lending row; append the
    lending row's suffix "— margin targets also load
@@ -428,31 +428,31 @@ across the corpus; `plugin.json` is `2.3.0`. This is the LAST plugin-content chu
    traces to perps-playbook.md §File and load trigger; companion_table_row_present; AC-2;
    release-wiring.md §Companion wiring, §Enumeration sites #2; companion_table_all_full_path,
    sui_native_load_condition_mentions_oracle; AC-2, AC-3; coverage-checks.md AC-6 (table part)
-2. [implement] Phase 8B in `$D`: rewrite the four archetype rows to full-path form; extend the
+2. [x] [implement] Phase 8B in `$D`: rewrite the four archetype rows to full-path form; extend the
    **Lending / margin** row with "and, for margin or leveraged targets,
    `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-perps-and-margin.md`" plus the perps
    parenthetical (funding settlement order, funding-rate bounds, self-trade on thin books,
    risk-parameter transitions, signed-value sinks) — traces to perps-playbook.md §File and load
    trigger (Phase 8B row); phase_8b_row_names_both; AC-2; release-wiring.md §Enumeration sites #3
-3. [implement] Rewrite every remaining in-text companion mention in `$D` (baseline hits ~53, 59,
+3. [x] [implement] Rewrite every remaining in-text companion mention in `$D` (baseline hits ~53, 59,
    136, 194, 381, 472, 496, 610, 614, 636, 642, 690, 737, 935, 943 — re-run the grep, do not
    trust the list) to carry the full path on the same line; where a line would exceed the
    file's wrap width, re-wrap so name and path stay on one line — traces to release-wiring.md
    §Companion wiring; no_bare_companion_mention, no_relative_or_repo_paths_in_plugin; AC-2;
    perps-playbook.md §no_bare_companion_mention_perps; AC-5
-4. [implement] Enumeration sites #1 and #4 in `$D`: frontmatter `description` →
+4. [x] [implement] Enumeration sites #1 and #4 in `$D`: frontmatter `description` →
    `archetype playbooks (vaults/AMM/lending/perps-margin/staking)`; Appendix C methodology item
    8 → `Protocol-archetype playbook (vault / AMM / lending / perps-margin / staking, as
    applicable)` — traces to release-wiring.md §Enumeration sites #1, #4;
    five_enumeration_sites_updated; AC-6
-5. [implement] `CLAUDE.md`: site #5 → `(vaults, AMM, lending, perps/margin, staking, Sui-native
+5. [x] [implement] `CLAUDE.md`: site #5 → `(vaults, AMM, lending, perps/margin, staking, Sui-native
    pitfalls)`; amend the "no application code, build system, or test suite" sentence with the
    `tests/fixtures/` clause; add the fixture build loop (fixtures.md
    `each_fixture_builds_clean` command) to the Commands block; add `docs/exploit-sources.md`
    and `tests/fixtures/<class-slug>/` lines to the layout tree — traces to release-wiring.md
    §Enumeration sites #5, §Additional `CLAUDE.md` edits; five_enumeration_sites_updated,
    claude_md_mentions_fixtures_and_sources; AC-6, AC-7; fixtures.md §Interaction with other specs
-6. [implement] Bump `plugins/sui-ai/.claude-plugin/plugin.json` `version` to `2.3.0` (no other
+6. [x] [implement] Bump `plugins/sui-ai/.claude-plugin/plugin.json` `version` to `2.3.0` (no other
    key; no `agents`/`commands` field; `.claude-plugin/marketplace.json` untouched), then run
    every release-wiring.md automated check that does not need git history — traces to
    release-wiring.md §Version; version_is_2_3_0, manifests_parse, marketplace_unchanged,
