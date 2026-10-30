@@ -79,6 +79,12 @@ Before writing a single finding, build a complete mental model:
    known high-severity issues and verify each against the fork, plus a divergence diff
    (ownership-model / `store`-ability / balance-handling / dynamic-field-schema changes that break
    parent invariants).
+10. **Platform / VM advisory context.** Record (a) the Sui framework / protocol version pinned by
+    `Move.toml` / `Move.lock` (or the toolchain's implicit framework version), (b) the chain the
+    target deploys to — state explicitly when it is not Sui mainnet (Movement, IOTA, Initia and other
+    Move-derived VMs have separate advisory streams), and (c) the published security advisories for
+    that framework version and chain. Advisory context only — this step never produces a finding by
+    itself.
 
 ### 1.1 Build three inventory tables before writing any finding
 
@@ -413,6 +419,22 @@ For fee and withdrawal systems, check retained fees, minted shares, HWM updates,
   protocol-wide — flag dual forms (per-whole-token vs per-base-unit) and formulas whose dimensional analysis does not close.
 - **Exact-equality payment asserts.** `assert!(payment == required)` on caller-supplied payments is
   griefable (the required amount can move mid-flight; integrator rounding breaks exactness) — prefer `>=` plus refund of the excess.
+- **Raw-bits stored, signed-read (domain reinterpretation).** Enumerate every numeric field written as unsigned /
+  raw bits and consumed as signed on a path to a value sink — fee, rate, funding, collateral or balance delta;
+  report N found / M traced. Seeds: `i64|i128|I64|I128|ifixed|IFixed|from_raw|from_bits|is_negative|sign|neg`.
+  Write domain must equal read domain, or the conversion must be explicit and validated; signed types with no
+  validating conversion ⇒ report the field. Traced constructor → sink = `likely`; pattern-only ⇒ max Medium.
+  Not a finding when the field is never read signed or the decoder aborts on the sign bit (Aftermath 2026).
+- **Validation at the write boundary.** For each candidate above, the constructor/setter must reject
+  negative or out-of-range values in the consuming domain's terms (`assert!(!is_negative(v))`,
+  `assert!(v <= MAX_FEE)`); absence is the finding — name the constructor. Not a finding when a
+  `public(package)` constructor's only callers already validate (trace them; an untraced "callers
+  validate" is `needs_review`).
+- **Caps compared in the consuming domain.** Every cap/bound/comparison on a candidate must be evaluated in
+  the same domain as the arithmetic that consumes it; a cap checked as unsigned on a value later read as
+  signed is a bypass candidate (a huge unsigned value passes `<= MAX` and wraps negative, or fails it while
+  the signed read sees a small negative). High requires the algebraic example at the type's bit width (the
+  two's-complement value that passes the cap and reads negative); otherwise max Medium.
 
 ### 5.4 Internal-Ledger Self-Transfer
 
@@ -540,12 +562,35 @@ Standard order:
 
 All asserts happen BEFORE state mutation.
 
-### 6.8 Weight & Governance Safety
+### 6.8 Governance, Voting & Weight Safety
+When the target has proposal, voting or proposal-execution functionality (grep
+`propose|vote|cast|quorum|execute_proposal|timelock`), run every governance item below and record each
+outcome individually in the findings or the verified-clean list.
 - [ ] Weights sum to constant: `assert!(w1 + w2 + w3 == WEIGHT_TOTAL, EInvalidWeightSum)`
 - [ ] Per-category weight bounds enforced
 - [ ] Rate-of-change limits enforced
 - [ ] `allow_overwrite` flag required to replace pending change
 - [ ] Timelock on weight changes before execution
+- [ ] **Voting power read from a snapshot taken strictly before proposal creation** (balance
+      checkpoint, locked-stake record or epoch): voting power must come from that snapshot — a live
+      `balance::value` / current-stake read inside `vote` is a flash-loan-defeatable candidate (Phase 1.1
+      lists quorum/threshold state as flash-loan-reachable).
+- [ ] **Quorum floor > 0, relative to total voting supply, and proposer threshold > 0:** quorum must be
+      expressed against voting supply, not as an absolute constant supply can outgrow. Report a zero
+      quorum, an absolute-constant quorum, or a zero proposer threshold. Not a finding when an absolute
+      quorum sits on a fixed-supply token with no mint path (cite the `TreasuryCap` disposition).
+- [ ] **Execution delay with veto:** a mandatory delay ≥ one voting period between pass and execute must
+      exist, plus a guardian/veto path that can cancel during it; either absent = candidate (name which).
+      The 6.5 timelock item covers admin actions; this one covers passed proposals.
+- [ ] **Allow-listed executable payload:** the payload must be an explicit allow-list of actions
+      (treasury transfer, package upgrade, parameter change, role grant), each itself capability-gated.
+      Move has no arbitrary call, so report the Move shapes of "arbitrary payload": a generic
+      `(target: address, amount: u64)` transfer, an `UpgradeTicket` authorisation without policy bound,
+      or a cap object handed to the executor.
+- [ ] **Vote tokens locked for the voting period:** tokens that voted must not be transferable and
+      re-voted within the same period (lock object, `key`-only vote receipt bound to the balance, or
+      snapshot semantics). Do not report when snapshot voting (item above) is satisfied — it makes
+      re-voting moot by construction; say so in the verified-clean list instead.
 
 ### 6.9 Whitelist Safety
 - [ ] Duplicate entry prevention
@@ -608,6 +653,23 @@ All asserts happen BEFORE state mutation.
       confirm the version field → grep every `&`/`&mut T` fn for the assert → confirm migration
       bumps it. A constructor bug fixed in v2 still drains via the v1 entry point unless gated —
       critical for reward-checkpoint constructors (see `defi-staking-and-rewards.md`).
+- [ ] **Two live writers of one accounting field:** when more than one version is published, or a
+      storage-layout migration (field → dynamic field / escrow object) shows in source or `Move.lock` history,
+      enumerate every field the current version reads for pricing/accounting (`reserve_*`, `total_*`, `supply`,
+      `index`) and every prior-version function writing it (N/M). Each must have one live writer lineage or
+      version-gated prior writers. Prior source unavailable ⇒ say so, tag `[ZD-EXT-UNVERIFIED]`, max Medium;
+      both writers read ⇒ `likely`/High. Not a finding when every prior writer is disabled by a cited version gate.
+- [ ] **Immutability declared (`make_immutable` / `UpgradeCap` burn) with a live legacy package, floor High:**
+      grep `make_immutable|burn.*UpgradeCap|UpgradeCap.*burn|destroy.*UpgradeCap`. A package must be made
+      immutable only if no prior version holds funds and every prior version is pause- or version-gated.
+      Severity no lower than High once the two-gate check passes (legacy entry point callable; funds or
+      pricing state live in it); immutability seen but legacy state unconfirmed ⇒ Medium, `needs_review` (no
+      patch path). Not a finding when the package has no shared state and no balances (pure library).
+- [ ] **Legacy entry points reachable through routers/aggregators:** enumerate every `public`/`entry`
+      function of prior versions that mutates shared state (N/M). Each must be unreachable for live state
+      (version gate, pause, or removed object type), including from external routers/aggregators that
+      address packages by ID; an ungated legacy entry point is a candidate (name it). Not a finding when the
+      function's shared-object parameter type no longer exists in any live object.
 - [ ] **Forgotten post-upgrade initializer:** `init` never re-runs on upgrade, so V2 singletons/
       state need their own gated initializer — a forgotten one can be front-run and claimed
 - [ ] Verify deployed bytecode matches reviewed source; prefer MVR / pinned `Move.lock` revisions
@@ -655,6 +717,14 @@ All asserts happen BEFORE state mutation.
 - PriceResolverCap holder can ratchet NAV?
 - Cumulative NAV deviation circuit breaker (not just per-harvest)?
 - Multiple independent price sources required?
+- **Permissionless NAV/AUM/price refresh** (grep `update_nav|update_aum|refresh_price|sync_price|poke`):
+  enumerate each permissionless function refreshing NAV/AUM/price from external pool balances (N/M);
+  every such refresh must be paired with a TWAP or deviation gate — absence is a candidate (name the
+  function); pattern-only ⇒ max Medium (Phase 9). Not a finding when the refresh is gated by a
+  capability whose holder is enumerated in Phase 2 (Makina 2025).
+- **Consumed-feed authority and plausibility.** When the target reads any price object it does not
+  itself produce, load `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/sui-native-pitfalls.md`
+  and run its `## Oracle integrations (Pyth / Switchboard / custom feeds)` section.
 
 ### 7.3 Cross-Module Call Chain Safety
 - Module A calling Module B's `public` function with crafted params

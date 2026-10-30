@@ -361,19 +361,19 @@ mentions in playbooks are rewritten.
 new bullets; the 6.8 rename is applied; the old heading is gone.
 **Depends on**: Chunk 0 (ordering); edits only `$D`, so it may run in parallel with Chunks 2, 3 and 6–8 but must close before Chunk 5.
 **Tasks**:
-1. [implement] Phase 1: add numbered step `10.` after step 9 (fork-ancestry sweep) and before
+1. [x] [implement] Phase 1: add numbered step `10.` after step 9 (fork-ancestry sweep) and before
    `### 1.1` — record the pinned framework/protocol version from `Move.toml`/`Move.lock`, the
    deployment chain (flag non-Sui-mainnet Move VMs), a published-advisory check, ending with
    "Advisory context only — this step never produces a finding by itself." — traces to
    coverage-checks.md §C19 CHK-C19-1; c19_step_10; AC-9
-2. [implement] 5.3a: add one to three bullets after the existing greps, the first with lead-in
+2. [x] [implement] 5.3a: add one to three bullets after the existing greps, the first with lead-in
    **Raw-bits stored, signed-read (domain reinterpretation).** (CHK-C3-1: enumerate
    cross-domain numeric fields on a path to a value sink, grep seeds, "must" invariant, absence,
    `likely` on traced path, Medium cap, carve-outs), followed directly by the write-boundary
    validation bullet (CHK-C3-2, "constructor") and the same-domain caps bullet (CHK-C3-3,
    "consuming domain", two's-complement evidence gate for High) — traces to coverage-checks.md
    §C3 CHK-C3-1..3; c3_bullets_in_5_3a; AC-2
-3. [implement] 6.8: rename the heading to `### 6.8 Governance, Voting & Weight Safety`, keep the
+3. [x] [implement] 6.8: rename the heading to `### 6.8 Governance, Voting & Weight Safety`, keep the
    five existing checkboxes, prepend the fixed trigger line (grep
    `propose|vote|cast|quorum|execute_proposal|timelock`, "record each outcome individually"),
    add five `- [ ]` items for CHK-C11-1..5 (snapshot before proposal; quorum relative to voting
@@ -381,13 +381,13 @@ new bullets; the 6.8 rename is applied; the old heading is gone.
    the three Move shapes of "arbitrary payload"; vote-token lock / re-vote, with the
    snapshot-makes-it-moot carve-out) — traces to coverage-checks.md §C11 CHK-C11-0..5;
    headings_exist_verbatim (6.8 part), c11_trigger_and_five_items; AC-1, AC-7
-4. [implement] 6.14: add three `- [ ]` items directly after **Stale-package attack surface** —
+4. [x] [implement] 6.14: add three `- [ ]` items directly after **Stale-package attack surface** —
    CHK-C6-1 (two live writers of one accounting field, `[ZD-EXT-UNVERIFIED]` when prior source
    is unavailable), CHK-C6-2 (`make_immutable|burn.*UpgradeCap|...` seeds; "no lower than High"
    after the two-gate check, Medium pattern-only, pure-library carve-out), CHK-C6-3 (legacy
    entry points reachable via routers/aggregators) — traces to coverage-checks.md §C6
    CHK-C6-1..3; c6_three_items_in_6_14, c6_floor_stated; AC-3
-5. [implement] 7.2: add the CHK-C7-4 bullet **Permissionless NAV/AUM/price refresh** (grep
+5. [x] [implement] 7.2: add the CHK-C7-4 bullet **Permissionless NAV/AUM/price refresh** (grep
    seeds `update_nav|update_aum|refresh_price|sync_price|poke`, "TWAP or deviation gate",
    capability-holder carve-out) and directly after it the CHK-C9 bullet **Consumed-feed
    authority and plausibility** — an explicit "load
@@ -397,7 +397,7 @@ new bullets; the 6.8 rename is applied; the old heading is gone.
    `sui_native_load_condition_mentions_oracle` return two lines) — traces to coverage-checks.md
    §C7 CHK-C7-4, §C9 driver bullet; c7_4_refresh_in_7_2, c9_driver_load_instruction; AC-4
    (refresh part), AC-6 (7.2 part); release-wiring.md §Placement of checks; AC-3 (CHK-C7-4 part)
-6. [verify] Run the chunk's greps; count each new driver bullet ≤ 6 wrapped lines; confirm no
+6. [x] [verify] Run the chunk's greps; count each new driver bullet ≤ 6 wrapped lines; confirm no
    new bold lead-in begins with a protocol name; confirm `grep -c CLAUDE_PLUGIN_ROOT $D` did not
    decrease — traces to coverage-checks.md §headings_exist_verbatim (driver part),
    no_incident_as_subject, style_lengths; AC-11, AC-12; release-wiring.md

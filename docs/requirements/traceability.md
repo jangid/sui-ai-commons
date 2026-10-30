@@ -14,26 +14,26 @@ fills Verified.
 | REQ-COV-003 | coverage-checks.md | catalog_rows_added | verification-and-false-positives.md §Move-specific false-positive catalog (4 rows) | |
 | REQ-COV-004 | coverage-checks.md | | | |
 | REQ-COV-005 | coverage-checks.md | | | |
-| REQ-COV-006 | coverage-checks.md | | | |
-| REQ-COV-007 | coverage-checks.md | | | |
-| REQ-COV-008 | coverage-checks.md | | | |
-| REQ-COV-009 | coverage-checks.md | | | |
-| REQ-COV-010 | coverage-checks.md | | | |
-| REQ-COV-011 | coverage-checks.md | | | |
-| REQ-COV-012 | coverage-checks.md | | | |
-| REQ-COV-013 | coverage-checks.md | | | |
-| REQ-COV-014 | coverage-checks.md | | | |
-| REQ-COV-015 | coverage-checks.md | | | |
-| REQ-COV-016 | coverage-checks.md | | | |
-| REQ-COV-017 | coverage-checks.md | | | |
+| REQ-COV-006 | coverage-checks.md | c3_bullets_in_5_3a | sui-move-auditor.md §5.3a High-signal correctness greps — Raw-bits stored, signed-read | |
+| REQ-COV-007 | coverage-checks.md | c3_bullets_in_5_3a | sui-move-auditor.md §5.3a High-signal correctness greps — Validation at the write boundary | |
+| REQ-COV-008 | coverage-checks.md | c3_bullets_in_5_3a | sui-move-auditor.md §5.3a High-signal correctness greps — Caps compared in the consuming domain | |
+| REQ-COV-009 | coverage-checks.md | c11_trigger_and_five_items; headings_exist_verbatim | sui-move-auditor.md §6.8 Governance, Voting & Weight Safety — trigger line | |
+| REQ-COV-010 | coverage-checks.md | c11_trigger_and_five_items | sui-move-auditor.md §6.8 Governance, Voting & Weight Safety — snapshot item | |
+| REQ-COV-011 | coverage-checks.md | c11_trigger_and_five_items | sui-move-auditor.md §6.8 Governance, Voting & Weight Safety — quorum / proposer threshold item | |
+| REQ-COV-012 | coverage-checks.md | c11_trigger_and_five_items | sui-move-auditor.md §6.8 Governance, Voting & Weight Safety — execution delay with veto item | |
+| REQ-COV-013 | coverage-checks.md | c11_trigger_and_five_items | sui-move-auditor.md §6.8 Governance, Voting & Weight Safety — allow-listed payload item | |
+| REQ-COV-014 | coverage-checks.md | c11_trigger_and_five_items | sui-move-auditor.md §6.8 Governance, Voting & Weight Safety — vote-token lock item | |
+| REQ-COV-015 | coverage-checks.md | c6_three_items_in_6_14 | sui-move-auditor.md §6.14 Package Upgrade Safety — Two live writers of one accounting field | |
+| REQ-COV-016 | coverage-checks.md | c6_three_items_in_6_14; c6_floor_stated | sui-move-auditor.md §6.14 Package Upgrade Safety — Immutability declared with a live legacy package | |
+| REQ-COV-017 | coverage-checks.md | c6_three_items_in_6_14 | sui-move-auditor.md §6.14 Package Upgrade Safety — Legacy entry points reachable through routers/aggregators | |
 | REQ-COV-018 | coverage-checks.md | c7_in_market_creation, c7_depth_unknown_path | defi-lending-and-liquidation.md §Market creation & configuration validation (Collateral listing quality) — Caps justified against liquidity depth | |
 | REQ-COV-019 | coverage-checks.md | c7_in_market_creation | defi-lending-and-liquidation.md §Market creation & configuration validation (Collateral listing quality) — Recursive borrow-and-re-supply bounded | |
 | REQ-COV-020 | coverage-checks.md | c7_c8_in_oracle_staleness | defi-lending-and-liquidation.md §Oracle staleness & price representability — Single-fill prices rejected | |
-| REQ-COV-021 | coverage-checks.md | | | |
+| REQ-COV-021 | coverage-checks.md | c7_4_refresh_in_7_2 | sui-move-auditor.md §7.2 Oracle & Price Manipulation — Permissionless NAV/AUM/price refresh | |
 | REQ-COV-022 | coverage-checks.md | c7_c8_in_oracle_staleness | defi-lending-and-liquidation.md §Oracle staleness & price representability — Ratio feeds composed with a base feed | |
 | REQ-COV-023 | coverage-checks.md | c7_c8_in_oracle_staleness | defi-lending-and-liquidation.md §Oracle staleness & price representability — Sanity band on feed changes | |
 | REQ-COV-024 | coverage-checks.md | c7_c8_in_oracle_staleness | defi-lending-and-liquidation.md §Oracle staleness & price representability — Coupled cap parameters move together | |
-| REQ-COV-025 | coverage-checks.md | c9_section_and_table | sui-native-pitfalls.md §Oracle integrations (Pyth / Switchboard / custom feeds) — Authority of consumed oracle objects (+ provider table) | |
+| REQ-COV-025 | coverage-checks.md | c9_section_and_table; c9_driver_load_instruction | sui-native-pitfalls.md §Oracle integrations (Pyth / Switchboard / custom feeds) — Authority of consumed oracle objects (+ provider table); sui-move-auditor.md §7.2 Oracle & Price Manipulation — Consumed-feed authority and plausibility (load bullet) | |
 | REQ-COV-026 | coverage-checks.md | c9_section_and_table | sui-native-pitfalls.md §Oracle integrations (Pyth / Switchboard / custom feeds) — Minimum oracle count and per-update move bound | |
 | REQ-COV-027 | coverage-checks.md | c9_section_and_table | sui-native-pitfalls.md §Oracle integrations (Pyth / Switchboard / custom feeds) — Oracle-priced round trip within one staleness window | |
 | REQ-COV-028 | coverage-checks.md | c9_section_and_table | sui-native-pitfalls.md §Oracle integrations (Pyth / Switchboard / custom feeds) — Signed keeper reports carry a plausibility bound | |
@@ -47,7 +47,7 @@ fills Verified.
 | REQ-COV-036 | perps-playbook.md | pb3_owner_not_account | defi-perps-and-margin.md §Self-trade and mark-price manipulation on thin books | |
 | REQ-COV-037 | perps-playbook.md | pb4_transition | defi-perps-and-margin.md §Risk-parameter changes and open positions | |
 | REQ-COV-038 | perps-playbook.md | pb5_points_to_driver | defi-perps-and-margin.md §Fees, funding and collateral deltas as signed-value sinks | |
-| REQ-COV-039 | coverage-checks.md | | | |
+| REQ-COV-039 | coverage-checks.md | c19_step_10 | sui-move-auditor.md §PHASE 1 — CONTEXT GATHERING, step 10 | |
 | REQ-COV-040 | coverage-checks.md | | | |
 | REQ-COV-041 | fixtures.md | | | |
 | REQ-COV-042 | fixtures.md | | | |
