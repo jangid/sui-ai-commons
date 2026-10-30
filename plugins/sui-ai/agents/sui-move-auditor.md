@@ -425,7 +425,7 @@ For fee and withdrawal systems, check retained fees, minted shares, HWM updates,
   griefable (the required amount can move mid-flight; integrator rounding breaks exactness) — prefer `>=` plus refund of the excess.
 - **Raw-bits stored, signed-read (domain reinterpretation).** Enumerate every numeric field written as unsigned /
   raw bits and consumed as signed on a path to a value sink — fee, rate, funding, collateral or balance delta;
-  report N found / M traced. Seeds: `i64|i128|I64|I128|ifixed|IFixed|from_raw|from_bits|is_negative|sign|neg`.
+  report N found / M traced. Seeds: `i64|i128|I64|I128|ifixed|IFixed|from_raw|from_bits|is_negative|sign_bit|\bneg\b`.
   Write domain must equal read domain, or the conversion must be explicit and validated; signed types with no
   validating conversion ⇒ report the field. Traced constructor → sink = `likely`; pattern-only ⇒ max Medium.
   Not a finding when the field is never read signed or the decoder aborts on the sign bit (Aftermath 2026).

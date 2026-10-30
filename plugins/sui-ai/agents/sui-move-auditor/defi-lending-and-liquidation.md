@@ -25,7 +25,7 @@ zero-trust posture over-reports here in ways that would make a protocol *less* s
   - **Caps justified against liquidity depth.** Every collateral must carry a supply cap and a
     borrow cap that are defensible against the asset's on-chain liquidity depth (the lending twin
     of the AMM playbook's manipulation-cost estimation). Three outcomes: (a) no cap → candidate,
-    Medium+; (b) cap present and depth known → judge it; (c) depth unknown (source-only review,
+    Medium; High with depth evidence; (b) cap present and depth known → judge it; (c) depth unknown (source-only review,
     unknown deployment, unreachable chain) → report every capped collateral as a `needs_review`
     candidate naming the cap and stating that depth could not be assessed — never skip silently.
     Not a finding when isolated-collateral mode prevents borrowing against other markets *and*
