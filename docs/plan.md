@@ -1,5 +1,5 @@
 ---
-status: planned
+status: active
 research_id: RS-001
 last_updated: 2026-10-30
 ---
@@ -98,7 +98,7 @@ numbers drift as chunks land: re-run the grep to record, never trust the list.
 written; the fixture dependency variant is a single recorded repository-wide decision.
 **Depends on**: None.
 **Tasks**:
-1. [spike] **S-1 — Switchboard On-Demand `Aggregator` authority model.** Budget: ≤ 5 tool calls,
+1. [x] [spike] **S-1 — Switchboard On-Demand `Aggregator` authority model.** Budget: ≤ 5 tool calls,
    2 sources (`on_demand/sources/schemas/aggregator.move` and the `actions/aggregator_*` modules
    in `github.com/switchboard-xyz/sui`, raw fetch; fallback source: Switchboard Sui docs page).
    Record: the readable field names for feed authority and queue, the setter guards
@@ -108,7 +108,36 @@ written; the fixture dependency variant is a single recorded repository-wide dec
    wording "pin aggregator ID + queue ID + consumer-side staleness/variance" and note it. Record
    the outcome as `**Findings (S-1)**` under this task — traces to coverage-checks.md §C9
    CHK-C9-1 [high-uncertainty] Spike S-1; AC-14
-2. [spike] **S-2 — fixture framework-dependency variant under Sui CLI 1.81.1.** Budget: ≤ 4 tool
+   - **Findings (S-1)**: **Outcome A** — the assumption holds; the C9 Switchboard row keeps
+     "pin aggregator ID + queue ID + authority". Sources read 2026-10-30 (raw fetch of
+     `github.com/switchboard-xyz/sui`, branch `main`, 4 fetches / 3 tool calls):
+     `on_demand/sources/schemas/aggregator.move`,
+     `on_demand/sources/actions/aggregator/aggregator_set_authority_action.move`,
+     `on_demand/sources/actions/aggregator/aggregator_set_configs_action.move` (the actions
+     live one level deeper than the spec guessed: `actions/aggregator/`, alongside
+     `aggregator_init_action.move`, `aggregator_submit_result_action.move`,
+     `aggregator_delete_action.move`). `Aggregator has key` fields: `id: UID`, `queue: ID`,
+     `created_at_ms`, `name: String`, `authority: address`, `feed_hash: vector<u8>`,
+     `min_sample_size: u64`, `max_staleness_seconds: u64`, `max_variance: u64`,
+     `min_responses: u32`, `current_result: CurrentResult`, `update_state`, `version: u8`.
+     Public readers: `authority(&Aggregator): address`, `queue(&Aggregator): ID`, `id`,
+     `feed_hash`, `min_sample_size`, `max_staleness_seconds`, `max_variance`, `min_responses`,
+     `current_result(&Aggregator): &CurrentResult`, `has_authority(&Aggregator, &mut TxContext): bool`
+     (= `aggregator.authority == ctx.sender()`). Setters are `public(package)` in the schema
+     (`set_authority(&mut Aggregator, address)`, `set_configs(...)`) and reachable only via the
+     action modules' `public entry fun run`, whose `validate` asserts
+     `aggregator.version() == EXPECTED_AGGREGATOR_VERSION` and `aggregator.has_authority(ctx)`
+     (`EInvalidAuthority`); `set_configs` additionally bounds `min_sample_size > 0`,
+     `max_variance > 0`, `feed_hash.length() == 32`, `min_responses > 0`,
+     `max_staleness_seconds > 0`. `CurrentResult` accessors: `result(): &Decimal`,
+     `timestamp_ms()`, `min_timestamp_ms()`, `max_timestamp_ms()`, `min_result()`,
+     `max_result()`, `stdev()`, `range()`, `mean()`. Confirmed: `current_result()` returns the
+     stored struct with no age gate (staleness is applied only when results are folded in), so
+     the consumer-side `Clock` age check in the row stays. Guard name for the C9 table:
+     `has_authority` (not a capability object; the feed authority is a plain `address` the
+     current authority can hand over with `set_authority`, which is exactly the mutable-authority
+     surface CHK-C9-1 pins). No replan trigger.
+2. [x] [spike] **S-2 — fixture framework-dependency variant under Sui CLI 1.81.1.** Budget: ≤ 4 tool
    calls, 1 build. The explicit pinned variant is ALREADY KNOWN to build (§Conventions → Fixture
    build environment: `rev = "bf4073918ed33cfa0b09c500658fa116a774bcfd"` under the two exports),
    so S-2's only remaining question is whether the implicit-system-dependency variant also
@@ -124,7 +153,22 @@ written; the fixture dependency variant is a single recorded repository-wide dec
    dependency-variant sentence in a minimal `tests/fixtures/README.md` (title line + the
    sentence; the table is added in Chunk 8) and as `**Findings (S-2)**` under this task
    — traces to fixtures.md §`Move.toml` contract [high-uncertainty] Spike S-2; AC-2
-3. [verify] Confirm neither replan trigger fired (S-1 produced one of the two named outcomes;
+   - **Findings (S-2)**: **variant = implicit framework dependency; `Move.lock` committed.**
+     `tests/fixtures/c11-governance-capture/Move.toml` with no `[dependencies]` table (only
+     `[package]` name/edition and `[addresses]`) built under `sui 1.81.1` with the two exports
+     and `</dev/null`: exit 0, output exactly `Downloading from https://github.com/MystenLabs/sui.git`
+     / `INCLUDING DEPENDENCY MoveStdlib` / `INCLUDING DEPENDENCY Sui` /
+     `BUILDING c11_governance_capture` — zero warning or error lines, no implicit-dependency
+     notice, so the explicit fallback line was not needed (1 build, 1 tool call). The generated
+     `Move.lock` (format `version = 4`) pins `MoveStdlib` and `Sui` to
+     `rev = "83f11dc85d5695a57894329b005b78d75f9bb059"` under `use_environment = "testnet"`
+     (`[pinned.testnet.*]` tables), i.e. the CLI resolves the framework against its own release,
+     not the `bf4073918ed33cfa0b09c500658fa116a774bcfd` commit named in §Conventions; the first
+     build needed `github.com` network access to fetch it. All nine fixtures (Chunks 6–8) use
+     this variant; `dependency_variant_uniform` must count 0 `[dependencies]` tables. Note: the
+     build also emits an untracked `build/` directory in the fixture dir; it is removed after
+     each build and must not be committed (see fixtures.md Q-IMPL-001). No replan trigger.
+3. [x] [verify] Confirm neither replan trigger fired (S-1 produced one of the two named outcomes;
    S-2 produced a zero-warning build under exactly one variant), the stub builds clean, and
    `Move.lock` was generated — traces to fixtures.md §each_fixture_builds_clean;
    overview.md §high_uncertainty_sections_have_spike_and_fallback

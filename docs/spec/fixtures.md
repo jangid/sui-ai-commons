@@ -202,3 +202,18 @@ not produce a finding; no fixture") and the dependency-variant statement from sp
       are spec-only handles for false-positive catalog rows, not checks, and have no fixture.
 - [ ] No file under `plugins/` is modified by the fixture additions; `plugin.json` version is
       unaffected by fixture-only commits.
+
+## Implementation Questions
+
+### Q-IMPL-001: `sui move build` output directory is untracked, not ignored
+**Tier**: 2 (spec ambiguity)
+**Spec reference**: §`Move.toml` contract — "`Move.lock` is committed (`.gitignore` currently
+ignores only `.sdd/` and `.claude/worktrees/`; no change needed)"
+**Decision**: each `sui move build` emits `<fixture>/build/` (compiled bytecode, several MB per
+fixture) which the spec's directory layout does not list and `.gitignore` does not exclude.
+Implementers delete `tests/fixtures/*/build/` after every build and never commit it; `.gitignore`
+is outside the fixture chunks' write scope, so adding a `tests/fixtures/*/build/` ignore line is
+left to the orchestrator (Chunk 8 or 9 may add it when `.gitignore` is in scope).
+**Rationale**: committing `build/` would bloat the repository and could make the
+`each_fixture_builds_clean` gate pass on stale bytecode; deleting it keeps the committed fixture
+to exactly `Move.toml`, `Move.lock`, `README.md`, `sources/` as the layout section states.
