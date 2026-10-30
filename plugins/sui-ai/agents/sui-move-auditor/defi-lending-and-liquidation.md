@@ -98,7 +98,8 @@ zero-trust posture over-reports here in ways that would make a protocol *less* s
   them atomically; separately settable parameters are a desync candidate (the ratio and its
   timestamp drift apart and the cap computes from a stale pair). Not a finding when a single
   struct-replacing setter writes them together — but then **Config updates that clobber runtime
-  state** (below) applies; cite both.
+  state** (below) applies; cite both. Pattern-only ⇒ max Medium; High once a desynced update is
+  shown on-chain or in a PTB trace.
 - **`10^decimals` normalization in every USD × raw-unit comparison** — and one canonical price
   representation across health, seizure, and settlement reads. A basis mismatch between any two
   of them mis-sizes liquidations by orders of magnitude.
