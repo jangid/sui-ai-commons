@@ -1,0 +1,7 @@
+[package]
+name = "c03_signed_value_reinterpretation"
+edition = "2024"
+# No published address line on purpose: fixtures are never published (see fixtures.md Q-IMPL-003)
+
+[addresses]
+c03_signed_value_reinterpretation = "0x0"

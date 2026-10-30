@@ -478,7 +478,7 @@ is empty.
 seven-heading README naming its CHK-/PB- ids and expected candidate locations.
 **Depends on**: Chunk 0 (S-2 variant and the c11 scaffold). May run in parallel with Chunks 2–5 and 7.
 **Tasks**:
-1. [implement] Complete `tests/fixtures/c11-governance-capture`: replace the S-2 stub with a
+1. [x] [implement] Complete `tests/fixtures/c11-governance-capture`: replace the S-2 stub with a
    governance module (40–150 lines) where `vote` reads live balance, `QUORUM = 0`, `execute`
    is callable in the same tx as pass with no delay, the payload is an arbitrary
    `(address, u64)` transfer, and there is no vote-token lock; README with the seven headings,
@@ -487,19 +487,19 @@ seven-heading README naming its CHK-/PB- ids and expected candidate locations.
    `CHK-C11-3`, `CHK-C11-4`, `CHK-C11-5` — never range notation); `sui move build` clean;
    commit `Move.lock` — traces to fixtures.md §Class-slug list row c11, §Per-fixture README
    contract; readme_headings_fixed, readme_cites_valid_ids; AC-3, AC-5 (CHK-C11-0..5)
-2. [implement] Create `tests/fixtures/c03-signed-value-reinterpretation`: perps-shaped module
+2. [x] [implement] Create `tests/fixtures/c03-signed-value-reinterpretation`: perps-shaped module
    where a fee field is stored as raw `u256`/`u64` by a constructor with no range check, decoded
    as signed fixed-point (local stand-in type) on the fee path into a collateral delta, with the
    cap compared in the unsigned domain; README whose `## Requirements` section spells out
    `CHK-C3-1`, `CHK-C3-2`, `CHK-C3-3` and `PB-5` individually (never `CHK-C3-1..3`); clean build;
    `Move.lock` — traces to fixtures.md §Class-slug list row c03; AC-5 (CHK-C3-1..3, PB-5)
-3. [implement] Create `tests/fixtures/c06-cross-version-state-desync`: modules `legacy` and `v2`
+3. [x] [implement] Create `tests/fixtures/c06-cross-version-state-desync`: modules `legacy` and `v2`
    both writing `Pool.reserve_x` from different balance sources, an admin function calling
    `package::make_immutable` while `legacy` holds funds, and an ungated `legacy` `public` entry
    point; README whose `## Requirements` section spells out `CHK-C6-1`, `CHK-C6-2`, `CHK-C6-3`
    individually; clean build; `Move.lock` — traces to fixtures.md §Class-slug list row c06;
    AC-5 (CHK-C6-1..3)
-4. [verify] For the three directories: `Move.toml` has `edition = "2024"`, no `published-at`,
+4. [x] [verify] For the three directories: `Move.toml` has `edition = "2024"`, no `published-at`,
    `[dependencies]` presence matches the S-2 variant; `Move.lock`, `README.md`, ≥ 1
    `sources/*.move` exist; README headings in order; every cited `REQ-COV-0NN` exists in
    `docs/requirements/traceability.md` and every cited `CHK-`/`PB-` id exists in `docs/spec/`;

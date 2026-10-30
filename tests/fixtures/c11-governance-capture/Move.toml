@@ -1,7 +1,7 @@
 [package]
 name = "c11_governance_capture"
 edition = "2024"
-# published-at deliberately absent: fixtures are never published
+# No published address line on purpose: fixtures are never published (see fixtures.md Q-IMPL-003)
 
 [addresses]
 c11_governance_capture = "0x0"

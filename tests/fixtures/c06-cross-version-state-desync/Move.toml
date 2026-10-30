@@ -1,0 +1,7 @@
+[package]
+name = "c06_cross_version_state_desync"
+edition = "2024"
+# No published address line on purpose: fixtures are never published (see fixtures.md Q-IMPL-003)
+
+[addresses]
+c06_cross_version_state_desync = "0x0"

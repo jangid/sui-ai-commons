@@ -217,3 +217,16 @@ left to the orchestrator (Chunk 8 or 9 may add it when `.gitignore` is in scope)
 **Rationale**: committing `build/` would bloat the repository and could make the
 `each_fixture_builds_clean` gate pass on stale bytecode; deleting it keeps the committed fixture
 to exactly `Move.toml`, `Move.lock`, `README.md`, `sources/` as the layout section states.
+
+### Q-IMPL-003: `Move.toml` template comment collides with the `published-at` gate
+**Tier**: 2 (spec ambiguity)
+**Spec reference**: §`Move.toml` contract (template comment `# published-at deliberately absent: fixtures
+are never published`) versus §Automated `move_toml_has_no_published_at_and_edition_2024`
+(`grep -L published-at` must list every fixture)
+**Decision**: the fixture `Move.toml` files keep a comment with the same meaning but without the
+literal token `published-at` ("No published address line on purpose: fixtures are never
+published"), so the grep-based gate and the template intent both hold. Applied to all three
+Chunk 6 fixtures (including the Chunk 0 `c11` scaffold); Chunks 7 and 8 use the same wording.
+**Rationale**: the gate is a literal substring grep, so the template comment as written makes
+every compliant fixture fail `move_toml_has_no_published_at_and_edition_2024`; changing the
+comment text is the smallest fix and leaves the contract (no `published-at` key) intact.
