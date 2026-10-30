@@ -41,14 +41,16 @@ Check IDs this fixture is a true positive for, each spelled out:
 - CHK-C8-2: `oracle_config::set_feed` replaces `collateral_feed` in one step; the new `value`
   is only checked for `> 0`, not against the previous value or a secondary reference, and
   there is no time-lock. Admin-only trigger does not dismiss it (trust qualification applies).
-  Confidence `confirmed`; severity High (one-step arbitrary price, blast-radius finding).
+  Confidence `likely` (static reading); severity cap Medium pattern-only; High once a one-step
+  `set_feed` to an arbitrary price is shown on-chain or in a PTB trace (blast-radius finding).
 - CHK-C8-3: the growth cap's coupled parameters `snapshot_ratio`, `snapshot_timestamp_ms` and
   `max_yearly_growth_bps` have three separate setters (`oracle_config::set_snapshot_ratio`,
   `oracle_config::set_snapshot_timestamp`, `oracle_config::set_max_yearly_growth`); only
   `oracle_config::create` writes ratio and timestamp together. Calling `set_snapshot_ratio`
   alone reproduces the Aave CAPO desync in `oracle_config::capped_value`. The
   struct-replacing-setter carve-out does not apply (no setter replaces the whole snapshot).
-  Confidence `confirmed`; severity Medium.
+  Confidence `likely` (static reading); severity cap Medium pattern-only; High once a lone
+  `set_snapshot_ratio` call is shown desynchronising `capped_value` on-chain or in a PTB trace.
 
 ## Expected noise
 

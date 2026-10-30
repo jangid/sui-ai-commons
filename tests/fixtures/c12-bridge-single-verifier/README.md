@@ -35,15 +35,19 @@ Check IDs this fixture is a true positive for, each spelled out:
   `bridge::attest` releases vault funds on that single attestation. The set authorises
   value-moving messages (reachability) and the whole `Bridge.vault` is reachable with one key
   (math bounds), so the two-gate check passes. Confidence `likely` (the configuration is
-  constructor-time, not a literal constant); severity High regardless of operator reputation.
+  constructor-time, not a literal constant); severity cap Medium pattern-only; High once the
+  deployed `VerifierSet` is read on-chain with a single member or `threshold == 1`, regardless
+  of operator reputation.
 - CHK-C12-2: `Bridge.used_nonces` is keyed by `nonce` alone and `bridge::attest` overwrites
   `Pending.recipient` / `Pending.amount` with each attester's payload — nothing binds the
   attestations to a hash of `(nonce, recipient, amount)`, so a stale or fabricated payload under
   a fresh nonce is paid. Cross-reference the existing **Nonce replay** signature bullet.
-  Confidence `confirmed`; severity High.
+  Confidence `likely` (static reading); severity cap Medium pattern-only; High once a replayed or
+  substituted payload under a fresh nonce is shown paid (on-chain trace or PTB replay).
 - CHK-C12-3: `bridge::refund` removes the recorded deposit but pays `claimed_amount`, bounded
   only by `Bridge.vault`; the `deposited <= claimed_amount` invariant is absent. Confidence
-  `confirmed`; severity High (capped by the vault balance).
+  `likely` (static reading); severity cap Medium pattern-only; High once a refund exceeding the
+  recorded deposit is shown on-chain or in a PTB trace (loss capped by the vault balance).
 
 ## Expected noise
 

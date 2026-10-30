@@ -35,7 +35,9 @@ Check IDs this fixture is a true positive for, each spelled out:
   do receive `&Market`, i.e. the index) — the ordering itself is the candidate. Cross-reference
   `defi-lending-and-liquidation.md` → `## Interest & accrual ordering` and
   `defi-staking-and-rewards.md` → `## Checkpoint & accumulator ordering (the core bugs)`.
-  Confidence `confirmed` (both paths are three lines in one module); severity High.
+  Confidence `likely` (both paths are three lines in one module; static reading); severity cap
+  Medium pattern-only; High once a mis-charged funding settlement is shown on-chain or in a PTB
+  trace against the deployed package.
 
 ## Expected noise
 

@@ -38,13 +38,16 @@ Check IDs this fixture is a true positive for, each spelled out:
   High with the algebraic example below.
 - CHK-C3-2: `perps_fees::create_integrator_info` performs no range or sign check on `fee`; the
   constructor is `public`, so the "callers validate" carve-out does not apply. Confidence
-  `confirmed`; severity High.
+  `likely` (static reading); severity cap Medium pattern-only; High once a sign-bit-set
+  `taker_fee_raw` is shown accepted by the deployed constructor (on-chain object or PTB trace).
 - CHK-C3-3: in `perps_fees::process_fill` the cap `fee.bits <= MAX_FEE_PER_FILL` is evaluated
   in the unsigned domain and only on the non-negative branch; a value with the sign bit set
   skips it and is credited as an uncapped rebate. Algebraic example (u256, two's complement):
   `taker_fee_raw = 2^256 - 10^23` reads as `-100,000 * 10^18`; for `notional = 10^18` the fee
   is `-10^23`, so `Position.collateral` increases by `10^23` (100,000 collateral units) with no
-  cap applied. Confidence `confirmed`; severity High.
+  cap applied. Confidence `likely` (static reading; the algebraic example is derived, not
+  executed); severity cap Medium pattern-only; High once the uncapped rebate is shown in a PTB
+  trace or an on-chain `Position.collateral` delta.
 - PB-5: `Position.collateral` in `perps_fees::process_fill` is the collateral-delta sink the
   playbook names; the report should cite it as the sink of the CHK-C3-1 trace rather than as a
   separate finding.

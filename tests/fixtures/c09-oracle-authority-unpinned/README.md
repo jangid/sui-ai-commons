@@ -49,17 +49,20 @@ pins neither the aggregator `object::id` nor the `queue` nor the `authority`.
 - CHK-C9-2: `vault::push_price` sets `Aggregator.price` from a single writer's single sample
   with no `min_sample_size` and no bound on the move from the previous value; the consumer
   asserts neither. Both controls absent ⇒ candidate at `vault::push_price` /
-  `vault::read_price`. Confidence `confirmed`; severity Medium.
+  `vault::read_price`. Confidence `likely` (static reading); severity cap Medium pattern-only;
+  High once a single-sample price move is shown accepted on-chain or in a PTB trace.
 - CHK-C9-3: `vault::deposit` mints `Shares<T>` at the current feed price and `vault::withdraw`
   redeems at the current feed price with no cooldown and no cumulative NAV-deviation breaker.
   Sequence inside one `MAX_STALENESS_MS` (60 s) window: `push_price(100x)` →
   `deposit(1 token)` mints 100x the fair shares → `push_price(1x)` → `withdraw` returns ~100
-  tokens for 1 deposited. Confidence `confirmed` (window length and price move stated);
-  severity High.
+  tokens for 1 deposited. Confidence `likely` (window length and price move stated from
+  source, not executed); severity cap Medium pattern-only; High once the round trip is replayed
+  in a PTB trace inside one staleness window.
 - CHK-C9-4: `vault::submit_report` verifies an ed25519 signature over `bcs(price)` against
   `Aggregator.keeper_pubkey` and then writes `price` unconditionally — signer identity only,
-  no deviation check against the previous value or a second feed. Confidence `confirmed`;
-  severity High (the Ostium shape).
+  no deviation check against the previous value or a second feed. Confidence `likely` (static
+  reading); severity cap Medium pattern-only; High once a signed out-of-band price is shown
+  written on-chain or in a PTB trace (the Ostium shape).
 
 ## Expected noise
 

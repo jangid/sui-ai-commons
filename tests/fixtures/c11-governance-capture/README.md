@@ -39,20 +39,29 @@ Check IDs this fixture is a true positive for, each spelled out:
 - CHK-C11-1: `governance::vote` reads `ballot.value()` — the live balance of the `Coin<GOV>`
   at vote time — with no snapshot or checkpoint taken before `propose`. Flash-loan-defeatable;
   cross-reference the Phase 1.1 flash-loan-reachable-state item. Confidence `likely`
-  (constructor-to-sink path is in one module); severity High.
+  (the live-balance read and the missing snapshot are both in `governance::vote`); severity
+  cap Medium pattern-only; High once a flash-loan-funded vote is shown on-chain or in a PTB
+  trace.
 - CHK-C11-2: `governance::QUORUM` is the absolute constant `0`, and `governance::propose`
-  has no proposer threshold. Confidence `confirmed` (constant is literal); severity High.
+  has no proposer threshold. Confidence `likely` (constant is literal; static reading); severity
+  cap Medium pattern-only; High once a proposal passing with zero votes is shown on-chain or in
+  a PTB trace.
 - CHK-C11-3: `governance::execute_proposal` has no delay between pass and execution (it does not
   even check `voting_ends_ms`) and no guardian/veto path exists anywhere in the module; propose,
-  vote and execute can run in a single PTB. Confidence `confirmed`; severity High.
+  vote and execute can run in a single PTB. Confidence `likely` (static reading); severity cap
+  Medium pattern-only; High once propose, vote and execute are shown in one PTB (trace or
+  replay).
 - CHK-C11-4: `Proposal.target` / `Proposal.amount` form a generic `(address, u64)` treasury
   transfer executed by `governance::execute_proposal` via `transfer::public_transfer` — the
-  Move shape of an arbitrary payload; no allow-list of actions. Confidence `confirmed`;
-  severity High.
-- CHK-C11-5: `governance::vote` borrows `&Coin<GOV>` and leaves no lock object or vote receipt;
-  the same coins can be moved to another address and voted again before `voting_ends_ms`.
-  Not covered by the snapshot carve-out because CHK-C11-1 also fails. Confidence `likely`;
-  severity Medium (High when combined with CHK-C11-1).
+  Move shape of an arbitrary payload; no allow-list of actions. Confidence `likely` (static
+  reading); severity cap Medium pattern-only; High once a treasury transfer executed through an
+  arbitrary `(target, amount)` proposal is shown on-chain or in a PTB trace.
+- CHK-C11-5: `governance::vote` borrows `&Coin<GOV>` and leaves no lock object, vote receipt or
+  per-voter record, so the same coin can vote repeatedly from the same account before
+  `voting_ends_ms` — a transfer to another address is not even needed. Not covered by the
+  snapshot carve-out because CHK-C11-1 also fails. Confidence `likely`; severity cap Medium
+  pattern-only; High once a repeat vote from one coin is shown on-chain or in a PTB trace
+  (stacks with CHK-C11-1).
 
 ## Expected noise
 

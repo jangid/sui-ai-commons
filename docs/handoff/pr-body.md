@@ -1,4 +1,6 @@
-This PR targets `main` from the `feature/exploit-coverage-refresh-2026-10` branch.
+This change lands on `main` directly by maintainer decision (kickoff operator decision 10): no
+feature branch and no pull request are opened this cycle, and `main` is pushed at DONE. This
+document is kept as the release note and rationale record for the change set.
 
 ## Why
 
@@ -20,13 +22,13 @@ pattern-only evidence (operator decision 5).
 
 | Class | Check IDs | File → heading | What the auditor now does differently | Incident(s) it would have caught |
 |---|---|---|---|---|
-| C3 | CHK-C3-1, CHK-C3-2, CHK-C3-3 | `sui-move-auditor.md` → `### 5.3a High-signal correctness greps (cheap, high severity)`; sinks in `defi-perps-and-margin.md` → `## Fees, funding and collateral deltas as signed-value sinks` | Enumerates every numeric field written as unsigned and read as signed (`IFixed`, `is_negative`, `SIGN_BIT`), requires validation at the write boundary and caps compared in the consuming domain; reports the constructor-to-sink path | Aftermath Perps (Sui, 2026-04-28) |
+| C3 | CHK-C3-1, CHK-C3-2, CHK-C3-3 | `sui-move-auditor.md` → `### 5.3a High-signal correctness greps (cheap, high severity)`; sinks in `defi-perps-and-margin.md` → `## Fees, funding and collateral deltas as signed-value sinks` | Enumerates every numeric field written as unsigned and read as signed (`IFixed`, `is_negative`, `from_bits`), requires validation at the write boundary and caps compared in the consuming domain; reports the constructor-to-sink path | Aftermath Perps (Sui, 2026-04-28) |
 | C6 | CHK-C6-1, CHK-C6-2, CHK-C6-3 | `sui-move-auditor.md` → `### 6.14 Package Upgrade Safety` | Three new items: two live writers of one accounting field, immutability declared while a legacy package still holds funds (floor High), legacy entry points reachable through routers/aggregators | BlueMove DEX (Sui, 2026-07-11) |
 | C7 | CHK-C7-1, CHK-C7-2, CHK-C7-3, CHK-C7-4 | `defi-lending-and-liquidation.md` → `## Market creation & configuration validation` (**Collateral listing quality**) and `## Oracle staleness & price representability`; `sui-move-auditor.md` → `### 7.2 Oracle & Price Manipulation` | Walks every listed collateral asset: caps justified against liquidity depth (with a `needs_review` path when depth is unknown), recursive borrow-and-re-supply bounded, single-fill prices rejected; permissionless NAV/price refresh must be TWAP/deviation-gated | Tectonic (Cronos, 2026-08-30); YieldBlox |
 | C8 | CHK-C8-1, CHK-C8-2, CHK-C8-3 | `defi-lending-and-liquidation.md` → `## Oracle staleness & price representability` | Classifies every consumed feed as ratio vs. absolute and requires composition with a base feed, a sanity band on feed-config changes, and coupled cap parameters updated atomically | Moonwell (Base, 2026-02-15); Aave CAPO |
 | C9 | CHK-C9-1, CHK-C9-2, CHK-C9-3, CHK-C9-4 | `sui-native-pitfalls.md` → `## Oracle integrations (Pyth / Switchboard / custom feeds)` (new section + provider table); `sui-move-auditor.md` → `### 7.2 Oracle & Price Manipulation` (load bullet) and COMPANION REFERENCES row | Enumerates every third-party price-object type and checks that its id / queue / authority is pinned per provider (Pyth: `get_price_identifier`; Switchboard: aggregator + queue + authority, spike S-1 Outcome A), minimum oracle count and per-update move bound, no oracle-priced round trip inside one staleness window, plausibility bound on signed keeper reports | Full Sail (Sui, 2026-08-29); Ostium |
 | C11 | CHK-C11-0, CHK-C11-1, CHK-C11-2, CHK-C11-3, CHK-C11-4, CHK-C11-5 | `sui-move-auditor.md` → `### 6.8 Governance, Voting & Weight Safety` (renamed from Weight & Governance Safety) | Governance trigger line runs five items individually: snapshot strictly before proposal, quorum floor > 0 plus proposer threshold, execution delay with veto/guardian, allow-listed payload, vote tokens locked for the voting period; each outcome recorded separately | BonkDAO (Solana, 2026-07-06); X100; Yapeswap |
-| C12 | CHK-C12-1, CHK-C12-2, CHK-C12-3 | `sui-native-pitfalls.md` → `## Cross-chain / bridge / ZK` | Requires a verifier quorum of independent operators (threshold 1 or one-operator sets are High), replay protection tied to the full message hash rather than a nonce alone, and refunds bounded by the deposit with inert failed callbacks | KelpDAO (2026-04-18); Liquid; NEAR Intents |
+| C12 | CHK-C12-1, CHK-C12-2, CHK-C12-3 | `sui-native-pitfalls.md` → `## Cross-chain / bridge / ZK` | Requires a verifier quorum of independent operators (1-of-1 or single-operator sets are no lower than High only after the two-gate check, Medium pattern-only), replay protection tied to the full message hash rather than a nonce alone, and refunds bounded by the deposit with inert failed callbacks | KelpDAO (2026-04-18); Liquid; NEAR Intents |
 | C19 | CHK-C19-1 | `sui-move-auditor.md` → `## PHASE 1 — CONTEXT GATHERING` (new step 10) | Records the pinned framework/protocol version and known platform advisories as context; advisory only, never produces a finding (REQ-COV-039, no fixture) | Platform/VM-level incidents in the RS-001 corpus (context, not a finding class) |
 | perps / C17 / C20 | PB-1, PB-2, PB-3, PB-4, PB-5 | `defi-perps-and-margin.md` (new playbook, loaded together with `defi-lending-and-liquidation.md`; wired via COMPANION REFERENCES and PHASE 8B) | Settle funding before any position/collateral mutation (a mutator with no `Clock`/index parameter cannot settle), funding-rate writers capability-gated or bounded with a reported manipulation window, self-match guard on owner addresses with smoothed/bounded mark price, risk-parameter setters re-check open positions or use a transition window, perps value sinks handed to the driver's 5.3a signed-value check | Perpetual Protocol v2 (Optimism, 2026-07-16); BiFi; Mars Perps (2025-12-14); SecuredFi; Rocket Perp; Aftermath Perps (sinks) |
 
@@ -149,6 +151,11 @@ byte-identical to `main`.
       the 72 live rows.
 
 ## Commit shape (for the orchestrator)
+
+Operator decision 10 (kickoff) supersedes steps 1 and 4 below for this cycle: commits land on
+`main` directly and no PR is opened; `branch_prefix` and `pr_exists_to_main_with_rationale_table`
+are therefore waived this cycle, while steps 2 and 3 still apply. Steps 1 and 4 are retained as
+the default for future cycles.
 
 Requirements the commit split must satisfy at commit time (release-wiring.md
 `bump_commit_subject_names_version`, `bump_and_content_same_commit`,

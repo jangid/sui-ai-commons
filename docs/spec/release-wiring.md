@@ -213,3 +213,11 @@ lines.
 - [ ] Every check is placed per the landing-spot tables in `coverage-checks.md` /
       `perps-playbook.md`; non-matching targets load no new playbook (REQ-REL-013).
 - [ ] No fixture-only or docs-only commit changes `plugin.json`.
+
+## Implementation Questions
+
+### Q-IMPL-004: Branch and PR gates waived for the 2026-10 cycle
+**Tier**: 2 (spec ambiguity — the spec assumes every change set ships through a feature branch and PR)
+**Spec reference**: §Branch and PR (`branch_prefix`, `pr_exists_to_main_with_rationale_table`; REQ-REL-009, REQ-REL-010)
+**Decision**: per kickoff operator decision 10 the exploit-coverage-refresh cycle lands on `main` directly (no feature branch, no PR; `main` is pushed at DONE). `branch_prefix` and `pr_exists_to_main_with_rationale_table` are not evaluated this cycle; `docs/handoff/pr-body.md` is kept as the release note / rationale record so the six-section contract is still satisfied as content. Plan gates phrased "against `main`" read against the pre-cycle commit ba39b14.
+**Rationale**: single-maintainer repository; the operator chose to avoid a self-reviewed PR. The branch/PR steps remain the default for future cycles — this entry records the one-cycle waiver, it does not change the contract.

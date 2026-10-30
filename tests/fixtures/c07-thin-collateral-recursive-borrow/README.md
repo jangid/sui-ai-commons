@@ -36,22 +36,23 @@ Check IDs this fixture is a true positive for, each spelled out:
 - CHK-C7-1: `Market<T>` (`lending::list_market`) has no `supply_cap` or `borrow_cap` field;
   the only validated listing parameter is `collateral_factor_bps <= BPS`. Enumeration: one
   listed collateral asset (the market's `T`), zero caps. Outcome (a) "no cap" ⇒ candidate at
-  `lending::list_market` / `Market.reserve`. Confidence `confirmed` for the absence; severity
-  Medium+ (depth is unknowable from source, so the report states that depth could not be
-  assessed rather than skipping).
+  `lending::list_market` / `Market.reserve`. Confidence `likely` (static reading of the absence); severity
+  cap Medium pattern-only; High with depth evidence (depth is unknowable from source, so the
+  report states that depth could not be assessed rather than skipping).
 - CHK-C7-2: `lending::borrow` returns `Coin<T>` and `lending::supply` accepts `Coin<T>` of the
   same market; `Account<T>` tracks `supplied` and `borrowed` of the same asset with no
   same-asset check, no per-asset loop count and no per-tx exposure snapshot. PTB sequence:
   `supply(c) -> borrow(c * cf) -> supply(...) -> borrow(...)` repeated until the reserve is
-  exhausted. Confidence `likely` (PTB sequence written) ⇒ severity High.
+  exhausted. Confidence `likely` (PTB sequence written, not executed); severity cap Medium
+  pattern-only; High once the loop is replayed in a PTB trace against the deployed package.
 - CHK-C7-3: the single oracle adapter is `PriceFeed.last_trade_price`, read by
   `lending::is_healthy` on the eligibility path; there is no TWAP/median, no second source and
   no per-update deviation bound. The seize-leg carve-out does not apply (this is the
-  eligibility price). Confidence `confirmed`; severity cap Medium pattern-only, High once
+  eligibility price). Confidence `likely` (static reading); severity cap Medium pattern-only, High once
   paired with the CHK-C7-2 loop (the manipulated price inflates every loop's capacity).
 - CHK-C7-4: `lending::refresh_price` is `public`, takes no capability, and writes
   `PriceFeed.last_trade_price` with no TWAP or deviation gate (grep seed `refresh_price`
-  hits). Confidence `confirmed`; severity cap Medium (pattern-only, inherits Phase 9).
+  hits). Confidence `likely` (static reading); severity cap Medium (pattern-only, inherits Phase 9).
 
 ## Expected noise
 

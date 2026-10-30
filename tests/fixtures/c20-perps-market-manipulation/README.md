@@ -33,17 +33,21 @@ Check IDs this fixture is a true positive for, each spelled out:
   per-interval change bound before writing `Market.funding_rate`; the harvest path is
   `market::settle_funding`, which credits the non-paying side `size * funding_rate / SCALE` in
   the same interval (funding-manipulation window: one `set_funding_rate` + one
-  `settle_funding` in a single PTB). Confidence `confirmed`; severity High.
+  `settle_funding` in a single PTB). Confidence `likely` (static reading); severity cap Medium
+  pattern-only; High once the `set_funding_rate` + `settle_funding` PTB is shown on-chain or
+  replayed in a trace.
 - PB-3: `market::match_orders` (named so because `match` is a Move 2024 keyword) guards
   self-matching with `object::id(taker) != object::id(maker)` — account IDs, not
   `Account.owner` addresses — so two accounts of one owner pass; and it writes
   `Market.mark_price = price` from the raw last fill with no EMA/TWAP or deviation bound against
   an index, so that price feeds `market::liquidate` and `market::remove_margin`. Both halves
-  are absent; report both. Confidence `confirmed`; severity High.
+  are absent; report both. Confidence `likely` (static reading); severity cap Medium
+  pattern-only; High once a self-match moving `Market.mark_price` into a liquidation is shown
+  on-chain or in a PTB trace.
 - PB-4: `market::set_maintenance_margin` writes `Market.maintenance_margin_bps` immediately with
   no re-check of open `Account`s, no transition window and no bounded step; a position healthy
   under the old threshold is instantly liquidatable via `market::liquidate`. Confidence
-  `confirmed`; severity Medium (admin-origin; cross-reference the driver's **Admin-origin latent
+  `likely` (static reading); severity cap Medium (admin-origin; cross-reference the driver's **Admin-origin latent
   user DoS**).
 
 ## Expected noise

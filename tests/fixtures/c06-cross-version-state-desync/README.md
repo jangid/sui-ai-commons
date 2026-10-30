@@ -36,16 +36,20 @@ prior-version source is available and the `[ZD-EXT-UNVERIFIED]` limitation does 
   `v2::deposit` writes it via `legacy::set_reserves` from `Vault.balance_x`. `v2::quote_mint`
   divides by the shared field, so a legacy swap that deflates it inflates the next V2 mint.
   Neither legacy writer is version-gated, so the carve-out does not apply. Confidence `likely`
-  (both writers read); severity High.
+  (both writers read); severity cap Medium pattern-only; High once a legacy swap followed by a
+  V2 mint is shown against the deployed package (on-chain trace or PTB replay).
 - CHK-C6-2: `v2::make_immutable` calls `sui::package::make_immutable(upgrade_cap)` while
   `legacy::Pool` still holds `balance_x` / `balance_y` and `legacy::swap_x_for_y` is neither
   paused nor version-gated. Two-gate feasibility passes (reachability: the legacy entry point
   is `public`; math-bounds: pool balances and `reserve_x` pricing state are live), so severity
-  is no lower than High. Confidence `confirmed` (grep seed `make_immutable` hits).
+  cap Medium pattern-only; High once the `UpgradeCap` is shown immutable on-chain (package
+  object state) while the legacy entry point is still callable. Confidence `likely` (grep seed
+  `make_immutable` hits; static reading only).
 - CHK-C6-3: `legacy::swap_x_for_y` and `legacy::add_liquidity` are `public` functions that
   mutate the shared `Pool` with no version field check, pause flag or removed object type;
   routers and aggregators that address the package by ID can still route through them.
-  Confidence `confirmed`; severity High.
+  Confidence `likely` (static reading); severity cap Medium pattern-only; High once a router
+  or aggregator is shown routing through the legacy entry point on-chain.
 
 ## Expected noise
 
