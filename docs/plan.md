@@ -185,7 +185,7 @@ written; the fixture dependency variant is a single recorded repository-wide dec
 automated check; nothing under `plugins/` changes.
 **Depends on**: None (may run in parallel with Chunk 0).
 **Tasks**:
-1. [implement] Create `docs/exploit-sources.md` with the frontmatter contract (`cutoff:
+1. [x] [implement] Create `docs/exploit-sources.md` with the frontmatter contract (`cutoff:
    2026-10-30`, `produced_by: RS-001`, `first_run_window: "[2025-10-30, 2026-10-30]"`,
    `last_updated`) and the first three of the SEVEN fixed-order sections — `# Exploit Sources`,
    `## Current cutoff`, `## Primary set`, `## Sources (ranked)`, `## Retry list`,
@@ -198,7 +198,7 @@ automated check; nothing under `plugins/` changes.
    hacks API, rekt.news, SlowMist Hacked and the budget-constrained-rerun rule — traces to exploit-sources.md §Frontmatter contract, §Section
    order; sources_file_exists_outside_plugins, frontmatter_has_cutoff_and_spike,
    strict_after_rule_stated, primary_set_names_three_sources_with_filter_field; AC-1
-2. [implement] Add `## Sources (ranked)` with eleven `### <rank>. <name>` subsections (RS-001
+2. [x] [implement] Add `## Sources (ranked)` with eleven `### <rank>. <name>` subsections (RS-001
    table (a) order, read from `docs/research/RS-001-exploit-coverage-refresh/findings.md` and
    `notes.md`), each carrying the nine labelled field lines in the fixed order, every one written
    as `- **<Label>:** <value>` with the label verbatim (`URL(s)`, `Covers`, `Fetch method`,
@@ -209,21 +209,21 @@ automated check; nothing under `plugins/` changes.
    field` non-`n/a` only for the primary three — traces to exploit-sources.md §Per-source field
    block, §Initial content; eleven_sources_present_in_rank_order,
    every_source_has_full_field_block, last_checked_is_date_or_never; AC-2
-3. [implement] Add `## Retry list` directly after `## Sources (ranked)` (columns `Source | Reason it failed | What to try next |
+3. [x] [implement] Add `## Retry list` directly after `## Sources (ranked)` (columns `Source | Reason it failed | What to try next |
    Since (run)`, rows for #7, #8, #9, #10, #11 — one row for every source whose
    `Verification status` is not `verified this run`, the `Source` cell repeating the
    `### <rank>. <name>` name verbatim — with the reasons and next queries fixed in the
    spec) and `## Change log` as the LAST section of the file, with one row for the 2026-10-30 /
    RS-001 run (task 4 inserts `## Rerun procedure` between the two) — traces to
    exploit-sources.md §Retry list contract; retry_list_covers_unverified_sources; AC-3
-4. [implement] Add `## Rerun procedure` between `## Retry list` and `## Change log`, as a
+4. [x] [implement] Add `## Rerun procedure` between `## Retry list` and `## Change log`, as a
    ten-step ordered list with the exact URLs, filter
    fields, year-rollover path, `$1M`/`$10M` thresholds, `C1–C25` classification, the
    untrusted-data rule, the Retry-list pass, and step 10 carrying the spike-contract sub-bullets
    (`RS-00N`, immutability of earlier spikes, `docs/research/index.md` row, `## Repeatability`,
    cutoff = `UTC day` the catalog is closed) — traces to exploit-sources.md §Rerun procedure
    contract, §Rerun spike contract; procedure_has_required_steps_in_order; AC-4, AC-5
-5. [verify] Run the ten exploit-sources.md automated checks as shell commands; render-check
+5. [x] [verify] Run the ten exploit-sources.md automated checks as shell commands; render-check
    every table (`grep -c '^|'` per table equals header+separator+rows); confirm this chunk
    touched nothing under `plugins/` and added no `scripts/`, cron or workflow file (BASE diff and
    porcelain over `plugins/ .github/ scripts/`) — traces to

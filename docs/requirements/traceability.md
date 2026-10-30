@@ -64,21 +64,21 @@ fills Verified.
 | REQ-REL-011 | release-wiring.md | | | |
 | REQ-REL-012 | release-wiring.md | | | |
 | REQ-REL-013 | release-wiring.md | | | |
-| REQ-SRC-001 | exploit-sources.md | | | |
-| REQ-SRC-002 | exploit-sources.md | | | |
-| REQ-SRC-003 | exploit-sources.md | | | |
-| REQ-SRC-004 | exploit-sources.md | | | |
-| REQ-SRC-005 | exploit-sources.md | | | |
-| REQ-SRC-006 | exploit-sources.md | | | |
-| REQ-SRC-007 | exploit-sources.md | | | |
-| REQ-SRC-008 | exploit-sources.md | | | |
-| REQ-SRC-009 | exploit-sources.md | | | |
-| REQ-SRC-010 | exploit-sources.md | | | |
-| REQ-SRC-011 | exploit-sources.md | | | |
-| REQ-SRC-012 | exploit-sources.md | | | |
-| REQ-SRC-013 | exploit-sources.md | | | |
-| REQ-SRC-014 | exploit-sources.md | | | |
-| REQ-SRC-015 | exploit-sources.md | | | |
-| REQ-SRC-016 | exploit-sources.md | | | |
-| REQ-SRC-017 | exploit-sources.md | | | |
-| REQ-SRC-018 | exploit-sources.md | | | |
+| REQ-SRC-001 | exploit-sources.md | sources_file_exists_outside_plugins | docs/exploit-sources.md (repo-level file) | |
+| REQ-SRC-002 | exploit-sources.md | every_source_has_full_field_block | docs/exploit-sources.md §Sources (ranked) | |
+| REQ-SRC-003 | exploit-sources.md | last_checked_is_date_or_never | docs/exploit-sources.md §Sources (ranked) `Last checked` | |
+| REQ-SRC-004 | exploit-sources.md | eleven_sources_present_in_rank_order | docs/exploit-sources.md §Sources (ranked) | |
+| REQ-SRC-005 | exploit-sources.md | eleven_sources_present_in_rank_order, primary_set_names_three_sources_with_filter_field | docs/exploit-sources.md §Primary set, §Sources (ranked) | |
+| REQ-SRC-006 | exploit-sources.md | retry_list_covers_unverified_sources | docs/exploit-sources.md §Retry list | |
+| REQ-SRC-007 | exploit-sources.md | procedure_has_required_steps_in_order | docs/exploit-sources.md §Rerun procedure | |
+| REQ-SRC-008 | exploit-sources.md | procedure_has_required_steps_in_order | docs/exploit-sources.md §Rerun procedure step 1 | |
+| REQ-SRC-009 | exploit-sources.md | strict_after_rule_stated | docs/exploit-sources.md §Current cutoff, §Rerun procedure step 1 | |
+| REQ-SRC-010 | exploit-sources.md | frontmatter_has_cutoff_and_spike | docs/exploit-sources.md frontmatter, §Current cutoff | |
+| REQ-SRC-011 | exploit-sources.md | procedure_has_required_steps_in_order (`$1M`) | docs/exploit-sources.md §Rerun procedure steps 5–6 | |
+| REQ-SRC-012 | exploit-sources.md | procedure_has_required_steps_in_order (`$10M`) | docs/exploit-sources.md §Rerun procedure step 7 | |
+| REQ-SRC-013 | exploit-sources.md | procedure_has_required_steps_in_order (`C1–C25`) | docs/exploit-sources.md §Rerun procedure step 8 | |
+| REQ-SRC-014 | exploit-sources.md | procedure_has_required_steps_in_order (`RS-00N`) | docs/exploit-sources.md §Rerun procedure step 10, sub-bullet 1 | |
+| REQ-SRC-015 | exploit-sources.md | procedure_has_required_steps_in_order (`Repeatability`) | docs/exploit-sources.md §Rerun procedure step 10, sub-bullet 2 | |
+| REQ-SRC-016 | exploit-sources.md | procedure_has_required_steps_in_order (`docs/research/index.md`) | docs/exploit-sources.md §Rerun procedure step 10, sub-bullet 3 | |
+| REQ-SRC-017 | exploit-sources.md | procedure_has_required_steps_in_order (`untrusted`) | docs/exploit-sources.md §Rerun procedure step 2 | |
+| REQ-SRC-018 | exploit-sources.md | no_automation_shipped | docs/exploit-sources.md §Rerun procedure (manual, preamble) | |
