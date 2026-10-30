@@ -32,9 +32,9 @@ how checks are worded; check wording and grep seeds are for the specs and implem
 
 | Category | File | Domain | Status | Count | Last Updated |
 |----------|------|--------|--------|-------|--------------|
-| Functional | functional/auditor-coverage.md | COV | Draft | 42 | 2026-10-30 |
-| Functional | functional/exploit-sources.md | SRC | Draft | 18 | 2026-10-30 |
-| Non-functional | non-functional/release.md | REL | Draft | 12 | 2026-10-30 |
+| Functional | [auditor-coverage](functional/auditor-coverage.md) | COV | Approved | 42 | 2026-10-30 |
+| Functional | [exploit-sources](functional/exploit-sources.md) | SRC | Approved | 18 | 2026-10-30 |
+| Non-functional | [release](non-functional/release.md) | REL | Approved | 12 | 2026-10-30 |
 
 ## Domain Prefixes
 

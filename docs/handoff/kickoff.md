@@ -118,5 +118,10 @@ artifact can cite a repository-resident source.
 11. **Red team**: ON for the verify stage (read-only adversarial pass after each verify
     return). Taken at the implement-stage gate, 2026-10-30.
 
+12. **History rebuild**: at the verify gate the operator chose to squash the 2.3.0 version
+    bump into the first plugin-content commit (3b75601) so `bump_and_content_same_commit`
+    holds by commit; the unpushed chain was rebuilt by cherry-pick (trees identical; backup
+    ref `backup/main-pre-squash`). Taken 2026-10-30.
+
 Earlier, pre-gate decisions: skip the brainstorming questions; keep a list of sources in
 this repository; this cycle will be rerun periodically.
