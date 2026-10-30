@@ -5,7 +5,7 @@ description: >
   Move-specific vulnerability detection (object model, capabilities, hot potato
   receipts, type confusion, stale-package upgrade risk, hard platform limits) with
   actor threat modeling, PTB attack simulation, spec-to-code verification, DeFi
-  archetype playbooks (vaults/AMM/lending/staking), on-chain randomness and
+  archetype playbooks (vaults/AMM/lending/perps-margin/staking), on-chain randomness and
   signature-replay analysis, deployed-package bytecode review, and evidence-gated
   false-positive discipline. Use for pre-deployment reviews, PR security audits,
   and DeFi protocol assessments.
@@ -34,12 +34,13 @@ the ones that apply:
 
 | Reference | Load when |
 |---|---|
-| `verification-and-false-positives.md` | **Always, before finalizing any finding** — evidence gates, confidence tiers, the Move false-positive catalog, dedup, severity discipline |
-| `defi-shares-and-vaults.md` | Target mints/burns shares against pooled assets (vaults, LP/receipt tokens, `total_shares`) |
-| `defi-amm-and-slippage.md` | DEX, router, CLMM, aggregator, or any swap / liquidity / spot-price-read path |
-| `defi-lending-and-liquidation.md` | Borrow/repay, collateral, health factors, interest accrual, liquidation |
-| `defi-staking-and-rewards.md` | Rewards distributed over a stake base (`reward_per_share`, `reward_debt`, liquid staking) |
-| `sui-native-pitfalls.md` | Randomness, signatures/replay, cross-chain, hard platform limits, Kiosk/Publisher, denylist, fixed-point libs, deployed-package/bytecode review |
+| `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/verification-and-false-positives.md` | **Always, before finalizing any finding** — evidence gates, confidence tiers, the Move false-positive catalog, dedup, severity discipline |
+| `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-shares-and-vaults.md` | Target mints/burns shares against pooled assets (vaults, LP/receipt tokens, `total_shares`) |
+| `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-amm-and-slippage.md` | DEX, router, CLMM, aggregator, or any swap / liquidity / spot-price-read path |
+| `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-lending-and-liquidation.md` | Borrow/repay, collateral, health factors, interest accrual, liquidation — margin targets also load `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-perps-and-margin.md` |
+| `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-perps-and-margin.md` | Leveraged positions, funding rates, margin accounts, position liquidation, integrator/builder fee codes — **load together with** `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-lending-and-liquidation.md` for any margin target |
+| `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-staking-and-rewards.md` | Rewards distributed over a stake base (`reward_per_share`, `reward_debt`, liquid staking) |
+| `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/sui-native-pitfalls.md` | Randomness, signatures/replay, cross-chain, oracle / third-party price-object consumption, hard platform limits, Kiosk/Publisher, denylist, fixed-point libs, deployed-package/bytecode review |
 
 ## OPERATING PRINCIPLES (apply throughout)
 
@@ -50,13 +51,14 @@ the ones that apply:
   M < N, the review is incomplete — say so rather than implying full coverage.
 - **Zero-trust has a counterweight.** Trust NO ONE *by default*, but a behavior that only a
   **declared-trusted** role can trigger (per `docs/`) is not itself a finding — see the trust
-  model and false-positive catalog in `verification-and-false-positives.md`. Logic bugs inside
+  model and false-positive catalog in
+  `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/verification-and-false-positives.md`. Logic bugs inside
   admin functions and blast-radius (compromised-key) analysis remain reportable regardless.
 - **Candidate ≠ finding.** A grep hit is a candidate; a grep miss is not proof of safety (most
   bugs are *missing* checks). Every finding passes the evidence and feasibility gates before it
   is reported.
 - **Twin-function rule.** Check every guard in the function's twins — sibling paths to the same economic
-  outcome (mode variants, inverse accessors, facades); a one-twin-only guard is the highest-signal finding — see `verification-and-false-positives.md`.
+  outcome (mode variants, inverse accessors, facades); a one-twin-only guard is the highest-signal finding — see `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/verification-and-false-positives.md`.
 
 ---
 
@@ -139,7 +141,8 @@ List and analyze EVERY involved party. For each one, simulate them going rogue.
   `accept` asserting `sender == proposed_new_admin`. A direct `transfer(admin_cap, addr)` to a
   supplied address is unrecoverable on a typo — the cap *is* the only key.
 - **Trust qualification (avoid noise):** "the declared-trusted admin behaves maliciously" is not a
-  finding — see `verification-and-false-positives.md`. Report instead: (a) **logic bugs inside**
+  finding — see `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/verification-and-false-positives.md`.
+  Report instead: (a) **logic bugs inside**
   admin functions, and (b) **blast radius** — assume the key is compromised: drain-in-one-tx?
   timelock? per-op limits?
 - **Admin-origin latent user DoS:** A routine, valid admin config (reward size, fee, parameter)
@@ -197,7 +200,7 @@ This is the highest priority. No funds must ever be leaked, drained, or misappro
 - **Receipt Consumption:** Do receipt-consuming functions validate ALL of: `strategy_id`, `adapter_id`, `pool_id`, asset types, and object binding — not only shape?
 - **Test-only leaks:** Verify `#[test_only]` receipt constructors are properly annotated and cannot be called in production.
 - **Production reachability (Test-only inverse):** every hot-potato/capability struct consumed or returned by a public entry point needs a non-`#[test_only]` constructor/destructor reachable in production —
-  green tests passing through `#[test_only]` backdoors prove nothing about reachability (deliverability mechanics: `sui-native-pitfalls.md`).
+  green tests passing through `#[test_only]` backdoors prove nothing about reachability (deliverability mechanics: `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/sui-native-pitfalls.md`).
 
 #### Hot Potato Receipt Validation Example
 ```move
@@ -384,7 +387,8 @@ For fee and withdrawal systems, check retained fees, minted shares, HWM updates,
 - **Abort-before-checkpoint deadlock:** Overflow-prone arithmetic in a *periodic accumulator*
   (`reward_per_share`, interest index) that runs *before* the `last_update`/index write freezes the
   pool permanently on every retry — including admin-cancel paths. Never dismiss as "just a DoS
-  abort" (see the overflow carve-out in `verification-and-false-positives.md`).
+  abort" (see the overflow carve-out in
+  `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/verification-and-false-positives.md`).
 - **Bit-shift silent wrapping:** `<<`/`>>` do **not** abort on overflow (unlike `+ − *`) —
   `1u64 << 64 == 0`. Check every shift's guard boundary (`<` vs `<=`) and that shift amount ≤ bit
   width.
@@ -491,7 +495,7 @@ public fun withdraw<T>(
 - [ ] Hot-potato receipt structs have NO abilities (no key, store, copy, drop)
 - [ ] Object deletion (`delete`) is properly gated and cleans up all dynamic fields
 - [ ] **PTB deliverability:** a `key`-only (non-`store`) object returned by value cannot be delivered
-      by `TransferObjects` — verify each returned object is deliverable or callee-self-custodied (`sui-native-pitfalls.md`)
+      by `TransferObjects` — verify each returned object is deliverable or callee-self-custodied (`${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/sui-native-pitfalls.md`)
 
 ### 6.3 Access Control & Initialization
 - [ ] `initialize` functions are `public(package)` — not `public` or `entry`
@@ -515,7 +519,7 @@ public fun withdraw<T>(
       must assert `object::id(obj)` against a registry/allow-list/stored ID (attacker mints a fake
       `Pool` with fabricated reserves)
 - [ ] **Randomness source** is `sui::random::Random`, never `tx_context::digest` / `uid_to_bytes` /
-      `epoch` / `epoch_timestamp_ms` for any winner/rarity/shuffle logic (see `sui-native-pitfalls.md`)
+      `epoch` / `epoch_timestamp_ms` for any winner/rarity/shuffle logic (see `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/sui-native-pitfalls.md`)
 - [ ] **Capability squatting on permissionless creation:** for every permissionless "create X" that
       mints an admin/manager cap over X, check (i) who receives the cap — caller-picked recipients
       enable squatting on canonical names/assets; (ii) creation params carry formula-derived
@@ -652,7 +656,8 @@ outcome individually in the findings or the verified-clean list.
       bricking clients mid-migration — neither is the universal default. Enumerate shared objects →
       confirm the version field → grep every `&`/`&mut T` fn for the assert → confirm migration
       bumps it. A constructor bug fixed in v2 still drains via the v1 entry point unless gated —
-      critical for reward-checkpoint constructors (see `defi-staking-and-rewards.md`).
+      critical for reward-checkpoint constructors (see
+      `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-staking-and-rewards.md`).
 - [ ] **Two live writers of one accounting field:** when more than one version is published, or a
       storage-layout migration (field → dynamic field / escrow object) shows in source or `Move.lock` history,
       enumerate every field the current version reads for pricing/accounting (`reserve_*`, `total_*`, `supply`,
@@ -673,7 +678,8 @@ outcome individually in the findings or the verified-clean list.
 - [ ] **Forgotten post-upgrade initializer:** `init` never re-runs on upgrade, so V2 singletons/
       state need their own gated initializer — a forgotten one can be front-run and claimed
 - [ ] Verify deployed bytecode matches reviewed source; prefer MVR / pinned `Move.lock` revisions
-      over floating git deps (see `sui-native-pitfalls.md` → deployed-package review)
+      over floating git deps (see
+      `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/sui-native-pitfalls.md` → deployed-package review)
 - [ ] Migration/`update_version` validates its target against the package's real `CURRENT_VERSION`
       (an unbounded target bricks every version-gated function) and is exempt from its own version guard — else migration can never run
 
@@ -695,13 +701,14 @@ outcome individually in the findings or the verified-clean list.
       keep *distinct* dynamic-field children loaded **across all PTB commands** under the runtime cap
       (default 1,000) — the 1,001st aborts with `MEMORY_LIMIT_EXCEEDED`. Raising gas does nothing;
       `sui move test` does not enforce it (only a node dry-run at scale does). Ask who can cheaply
-      mint new distinct keys to inflate the count. See `sui-native-pitfalls.md`.
+      mint new distinct keys to inflate the count. See
+      `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/sui-native-pitfalls.md`.
 - [ ] **Inline collection byte-size cap (~256KB):** a `vector`/`VecMap`/`VecSet` field on a `key`
       struct is stored inline; permissionless appends eventually make *every* write to the object
       abort (a protocol constant, not a gas budget). Flag any inline collection redundant with an
       existing `Table` — use `Table`/`Bag`/`TableVec` or events instead.
 - [ ] **Cap fired ≠ natural stop:** a visitation cap added to any loop makes "cap fired" and "natural stop"
-      different postconditions — state decisions keyed on "loop stopped" must branch on *why*; mechanism in `defi-amm-and-slippage.md`
+      different postconditions — state decisions keyed on "loop stopped" must branch on *why*; mechanism in `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-amm-and-slippage.md`
 
 ---
 
@@ -757,7 +764,7 @@ outcome individually in the findings or the verified-clean list.
 - `object::id()` stability not abused
 
 ### 7.6 Randomness, Signatures & Cross-Chain
-Load `sui-native-pitfalls.md` when any apply. Key teeth:
+Load `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/sui-native-pitfalls.md` when any apply. Key teeth:
 - **Randomness test-and-abort:** an `entry` fn that makes a `sui::random` roll observable-then-
   abortable lets a PTB retry until it wins — trace each roll to an *irreversible-in-the-same-call*
   consequence (**Critical** for lotteries/loot boxes)
@@ -786,15 +793,20 @@ Phases 1–8 are protocol-agnostic. Now classify the target and run the matching
 playbook(s) from `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/` as an **additional** checklist — these carry the
 DeFi economic-mechanism findings the generic phases do not:
 
-- **Vault / LP / receipt token** (mints shares) → `defi-shares-and-vaults.md` (inflation,
+- **Vault / LP / receipt token** (mints shares) →
+  `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-shares-and-vaults.md` (inflation,
   donation Sui-nuance, zero-share mint, round-trip, return-to-zero, coin/balance ghost accounting)
-- **DEX / router / CLMM / aggregator** → `defi-amm-and-slippage.md` (min-out presence &
+- **DEX / router / CLMM / aggregator** →
+  `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-amm-and-slippage.md` (min-out presence &
   self-referential slippage, LP-op slippage, keeper paths, TWAP gates, CLMM tick overflow,
   flash-swap repayment)
-- **Lending / margin** → `defi-lending-and-liquidation.md` (accrual ordering, per-tx close factor,
-  post-liq health, blockable/unprofitable liquidation, pause symmetry, bad debt, **known-good
-  patterns to NOT report**)
-- **Staking / rewards / liquid staking** → `defi-staking-and-rewards.md` (uninitialized
+- **Lending / margin** → `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-lending-and-liquidation.md` **and, for margin or leveraged targets,** `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-perps-and-margin.md`
+  (accrual ordering, per-tx close factor, post-liq health, blockable/unprofitable liquidation,
+  pause symmetry, bad debt, **known-good patterns to NOT report**; perps: funding settlement
+  order, funding-rate bounds, self-trade on thin books, risk-parameter transitions, signed-value
+  fee/funding/collateral sinks)
+- **Staking / rewards / liquid staking** →
+  `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-staking-and-rewards.md` (uninitialized
   checkpoint, accumulator ordering, precision, flash-stake criterion, commission drift)
 
 A protocol that spans several archetypes runs several playbooks.
@@ -804,7 +816,7 @@ A protocol that spans several archetypes runs several playbooks.
 ## PHASE 9 — SEVERITY-CLASSIFIED REPORT
 
 **Verification gate — run before any finding enters the report.** Load
-`verification-and-false-positives.md` and clear each candidate through: the Move false-positive
+`${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/verification-and-false-positives.md` and clear each candidate through: the Move false-positive
 catalog (owned-object param *is* the gate, overflow aborts unless abort-before-checkpoint, no
 EVM-style reentrancy, no public mempool), the confidence tier (pattern-only ⇒ max Medium), the
 two-gate feasibility check (reachability + math-bounds) for anything High/Critical, and the
@@ -983,7 +995,7 @@ fun test_exploit_c01() {
 5. Balance arithmetic & NAV review
 6. PTB composability attack surface analysis (incl. per-transaction limit bypass)
 7. Package upgrade & stale-package safety assessment
-8. Protocol-archetype playbook (vault / AMM / lending / staking, as applicable)
+8. Protocol-archetype playbook (vault / AMM / lending / perps-margin / staking, as applicable)
 9. Evidence-gated finding verification & false-positive suppression
 ```
 
@@ -1002,7 +1014,8 @@ fun test_exploit_c01() {
 
 - Trust NO ONE by default. Every actor is a potential attacker — **but** a behavior only a
   *declared-trusted* role (per `docs/`) can trigger is not itself a finding; report logic bugs
-  inside admin functions and blast-radius instead (see `verification-and-false-positives.md`).
+  inside admin functions and blast-radius instead (see
+  `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/verification-and-false-positives.md`).
 - If a function CAN be abused, assume it WILL be abused.
 - Flag anything where funds move without explicit, verifiable authorization.
 - Do not skip any function, even helper/internal ones. **Absence rule:** a guard elsewhere never
@@ -1010,7 +1023,8 @@ fun test_exploit_c01() {
 - TODO comments in security-critical paths are findings.
 - Point out missing checks even if the current code "works" — defense in depth is required.
 - **PTB PARANOIA:** Always assume the caller is separating outputs in the Programmable Transaction Block and routing them to arbitrary malicious destinations.
-- **Every finding clears the Phase 9 verification gate** (`verification-and-false-positives.md`)
+- **Every finding clears the Phase 9 verification gate**
+  (`${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/verification-and-false-positives.md`)
   before it is reported — no plausible-but-unverified Criticals, no EVM-imported false positives.
 - For every finding, state whether a regression test exists.
 - Cross-reference findings against `docs/` specs — note spec section violated.
