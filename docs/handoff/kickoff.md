@@ -104,5 +104,11 @@ artifact can cite a repository-resident source.
    (repo-level, outside `plugins/`) that the auditor is expected to flag as a candidate;
    fixtures should compile with `sui move build` when the CLI is available.
 
+9. **Companion path rule (strict)**: every mention of a companion playbook file in
+   agent content — the companion table, the Phase 8B list and in-text "see X.md"
+   mentions — uses the full `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/<file>.md`
+   form. The existing table and 8B list are rewritten to that form in this cycle.
+   (Taken at the specs gate, 2026-10-30; REQ-REL-002 stands as written.)
+
 Earlier, pre-gate decisions: skip the brainstorming questions; keep a list of sources in
 this repository; this cycle will be rerun periodically.
