@@ -1,0 +1,7 @@
+[package]
+name = "c20_perps_market_manipulation"
+edition = "2024"
+# No published address line on purpose: fixtures are never published (see fixtures.md Q-IMPL-003)
+
+[addresses]
+c20_perps_market_manipulation = "0x0"

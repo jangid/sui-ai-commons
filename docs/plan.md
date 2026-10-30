@@ -553,27 +553,27 @@ per fixture directory `$d`: `(cd "$d" && awk '/^```/{c=!c; next} !c && /^#/' REA
 slugs to classes, requirement ids and expected candidates with the C19 exemption.
 **Depends on**: Chunk 6, Chunk 7.
 **Tasks**:
-1. [implement] Create `tests/fixtures/c12-bridge-single-verifier`: `VerifierSet { members:
+1. [x] [implement] Create `tests/fixtures/c12-bridge-single-verifier`: `VerifierSet { members:
    vector<address>, threshold: 1 }` accepted at construction; replay key is `nonce` only;
    `refund` pays `claimed_amount` not bounded by `deposited`; README spelling out `CHK-C12-1`,
    `CHK-C12-2`, `CHK-C12-3` individually; clean
    build; `Move.lock` — traces to fixtures.md §Class-slug list row c12; AC-5 (CHK-C12-1..3)
-2. [implement] Create `tests/fixtures/c20-perps-market-manipulation`: `set_funding_rate`
+2. [x] [implement] Create `tests/fixtures/c20-perps-market-manipulation`: `set_funding_rate`
    permissionless and unbounded; `match` with no `taker != maker` owner check and mark price
    taken from the last fill; `set_maintenance_margin` with no open-position re-check; README
    spelling out `PB-2`, `PB-3`, `PB-4` individually; clean build; `Move.lock` — traces to fixtures.md §Class-slug list row c20;
    AC-5 (PB-2..4)
-3. [implement] Create `tests/fixtures/perps-funding-settlement-ordering`: `increase_position` /
+3. [x] [implement] Create `tests/fixtures/perps-funding-settlement-ordering`: `increase_position` /
    `add_collateral` mutate size/margin before `settle_funding` is called; README citing `PB-1`;
    clean build; `Move.lock` — traces to fixtures.md §Class-slug list row perps-funding; AC-5 (PB-1)
-4. [implement] Complete `tests/fixtures/README.md`: one table `Slug | Class | Incident |
+4. [x] [implement] Complete `tests/fixtures/README.md`: one table `Slug | Class | Incident |
    Requirement IDs | Expected candidate (short)` with nine rows whose first cell is the bare
    directory slug in backticks (`` `c03-signed-value-reinterpretation` `` …, nothing else in the
    cell) matching the directories, the
    C19 exemption note ("REQ-COV-039 is advisory and must not produce a finding; no fixture"), and
    the S-2 dependency-variant statement already present — traces to fixtures.md §Index
    `tests/fixtures/README.md`; index_table_complete; AC-4, AC-2 (variant recorded)
-5. [verify] Run the full fixtures.md automated list over all nine directories; confirm every
+5. [x] [verify] Run the full fixtures.md automated list over all nine directories; confirm every
    one of the 31 CHK-*/PB-* ids (CHK-C3-1..3, C6-1..3, C7-1..4, C8-1..3, C9-1..4, C11-0..5,
    C12-1..3, PB-1..5) appears spelled out in exactly one fixture README, no README cites an id
    absent from the specs, and CHK-C19-1 appears in none; confirm no file under `plugins/` is

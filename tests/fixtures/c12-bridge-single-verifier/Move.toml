@@ -1,0 +1,7 @@
+[package]
+name = "c12_bridge_single_verifier"
+edition = "2024"
+# No published address line on purpose: fixtures are never published (see fixtures.md Q-IMPL-003)
+
+[addresses]
+c12_bridge_single_verifier = "0x0"

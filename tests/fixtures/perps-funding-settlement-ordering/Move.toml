@@ -1,0 +1,7 @@
+[package]
+name = "perps_funding_settlement_ordering"
+edition = "2024"
+# No published address line on purpose: fixtures are never published (see fixtures.md Q-IMPL-003)
+
+[addresses]
+perps_funding_settlement_ordering = "0x0"
