@@ -11,7 +11,7 @@ fills Verified.
 |-------------|------|------|----------------|----------|
 | REQ-COV-001 | coverage-checks.md | | | |
 | REQ-COV-002 | coverage-checks.md | | | |
-| REQ-COV-003 | coverage-checks.md | | | |
+| REQ-COV-003 | coverage-checks.md | catalog_rows_added | verification-and-false-positives.md §Move-specific false-positive catalog (4 rows) | |
 | REQ-COV-004 | coverage-checks.md | | | |
 | REQ-COV-005 | coverage-checks.md | | | |
 | REQ-COV-006 | coverage-checks.md | | | |
@@ -26,20 +26,20 @@ fills Verified.
 | REQ-COV-015 | coverage-checks.md | | | |
 | REQ-COV-016 | coverage-checks.md | | | |
 | REQ-COV-017 | coverage-checks.md | | | |
-| REQ-COV-018 | coverage-checks.md | | | |
-| REQ-COV-019 | coverage-checks.md | | | |
-| REQ-COV-020 | coverage-checks.md | | | |
+| REQ-COV-018 | coverage-checks.md | c7_in_market_creation, c7_depth_unknown_path | defi-lending-and-liquidation.md §Market creation & configuration validation (Collateral listing quality) — Caps justified against liquidity depth | |
+| REQ-COV-019 | coverage-checks.md | c7_in_market_creation | defi-lending-and-liquidation.md §Market creation & configuration validation (Collateral listing quality) — Recursive borrow-and-re-supply bounded | |
+| REQ-COV-020 | coverage-checks.md | c7_c8_in_oracle_staleness | defi-lending-and-liquidation.md §Oracle staleness & price representability — Single-fill prices rejected | |
 | REQ-COV-021 | coverage-checks.md | | | |
-| REQ-COV-022 | coverage-checks.md | | | |
-| REQ-COV-023 | coverage-checks.md | | | |
-| REQ-COV-024 | coverage-checks.md | | | |
-| REQ-COV-025 | coverage-checks.md | | | |
-| REQ-COV-026 | coverage-checks.md | | | |
-| REQ-COV-027 | coverage-checks.md | | | |
-| REQ-COV-028 | coverage-checks.md | | | |
-| REQ-COV-029 | coverage-checks.md | | | |
-| REQ-COV-030 | coverage-checks.md | | | |
-| REQ-COV-031 | coverage-checks.md | | | |
+| REQ-COV-022 | coverage-checks.md | c7_c8_in_oracle_staleness | defi-lending-and-liquidation.md §Oracle staleness & price representability — Ratio feeds composed with a base feed | |
+| REQ-COV-023 | coverage-checks.md | c7_c8_in_oracle_staleness | defi-lending-and-liquidation.md §Oracle staleness & price representability — Sanity band on feed changes | |
+| REQ-COV-024 | coverage-checks.md | c7_c8_in_oracle_staleness | defi-lending-and-liquidation.md §Oracle staleness & price representability — Coupled cap parameters move together | |
+| REQ-COV-025 | coverage-checks.md | c9_section_and_table | sui-native-pitfalls.md §Oracle integrations (Pyth / Switchboard / custom feeds) — Authority of consumed oracle objects (+ provider table) | |
+| REQ-COV-026 | coverage-checks.md | c9_section_and_table | sui-native-pitfalls.md §Oracle integrations (Pyth / Switchboard / custom feeds) — Minimum oracle count and per-update move bound | |
+| REQ-COV-027 | coverage-checks.md | c9_section_and_table | sui-native-pitfalls.md §Oracle integrations (Pyth / Switchboard / custom feeds) — Oracle-priced round trip within one staleness window | |
+| REQ-COV-028 | coverage-checks.md | c9_section_and_table | sui-native-pitfalls.md §Oracle integrations (Pyth / Switchboard / custom feeds) — Signed keeper reports carry a plausibility bound | |
+| REQ-COV-029 | coverage-checks.md | c12_three_bullets | sui-native-pitfalls.md §Cross-chain / bridge / ZK — Verifier quorum of independent operators | |
+| REQ-COV-030 | coverage-checks.md | c12_three_bullets | sui-native-pitfalls.md §Cross-chain / bridge / ZK — Replay protection beyond a nonce | |
+| REQ-COV-031 | coverage-checks.md | c12_three_bullets | sui-native-pitfalls.md §Cross-chain / bridge / ZK — Refund never exceeds deposit; failed callbacks are inert | |
 | REQ-COV-032 | perps-playbook.md | playbook_file_exists_in_companion_dir, load_when_opener_states_dual_load, six_fixed_headings_present_in_order, preamble_states_cap, known_good_section_present | defi-perps-and-margin.md (whole file: title, opener, preamble, six headings, known-good section) | |
 | REQ-COV-033 | perps-playbook.md | load_when_opener_states_dual_load, no_bare_companion_mention_perps, lending_margin_content_untouched (companion_table_row_present, phase_8b_row_names_both — Chunk 5) | defi-perps-and-margin.md opener (dual-load sentence); driver companion table + Phase 8B row — Chunk 5, open | |
 | REQ-COV-034 | perps-playbook.md | pb1_settle_first | defi-perps-and-margin.md §Funding settlement ordering | |

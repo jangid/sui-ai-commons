@@ -19,6 +19,23 @@ zero-trust posture over-reports here in ways that would make a protocol *less* s
   setters can reach every field from that state.
 - **`window > 0` — and a positive floor on every divisor/duration parameter.** A zero slips
   past creation and freezes the first runtime path that divides by it.
+- **Collateral listing quality.** The two checks below walk every listed collateral asset (N found
+  / M analysed, counted in the report); grep `supply_cap|borrow_cap|max_supply|max_borrow` and
+  the asset-listing setters (`add_market|list_asset|add_collateral`). Pattern-only ⇒ max Medium.
+  - **Caps justified against liquidity depth.** Every collateral must carry a supply cap and a
+    borrow cap that are defensible against the asset's on-chain liquidity depth (the lending twin
+    of the AMM playbook's manipulation-cost estimation). Three outcomes: (a) no cap → candidate,
+    Medium+; (b) cap present and depth known → judge it; (c) depth unknown (source-only review,
+    unknown deployment, unreachable chain) → report every capped collateral as a `needs_review`
+    candidate naming the cap and stating that depth could not be assessed — never skip silently.
+    Not a finding when isolated-collateral mode prevents borrowing against other markets *and*
+    the cap is bounded by a formula over the asset's own pool.
+  - **Recursive borrow-and-re-supply bounded.** Borrowing an asset and supplying the same asset
+    as collateral within one transaction must be forbidden or bounded (per-asset loop count, or a
+    per-tx exposure snapshot checked at the end). Grep the `borrow`/`supply` (`deposit`) pair
+    taking the same `Coin<T>` type; absence of any same-asset check across that pair is the
+    candidate (name both functions). Cross-reference the driver's **Per-call vs. per-transaction
+    limits** (Phase 7.5). Cap: Medium until a PTB sequence is written (`likely` ⇒ High).
 
 ## Interest & accrual ordering
 
@@ -37,7 +54,9 @@ zero-trust posture over-reports here in ways that would make a protocol *less* s
 - **Abort-before-checkpoint deadlock.** If overflow-prone arithmetic runs *before*
   `last_update_time`/index is written, every retry grows the delta and the pool freezes
   permanently — including admin-cancel paths. Never dismiss overflow in an accrual function as
-  "just a DoS abort." (See verification-and-false-positives.md — overflow carve-out.)
+  "just a DoS abort." (See
+  `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/verification-and-false-positives.md` — overflow
+  carve-out.)
 
 ## Oracle staleness & price representability
 
@@ -55,6 +74,31 @@ zero-trust posture over-reports here in ways that would make a protocol *less* s
   prices for the smallest-priced supported asset.
 - **No unpriced-asset $1 assumption.** An asset without a feed must never be silently assumed
   to have a fixed valuation; abort or exclude it explicitly.
+- **Single-fill prices rejected.** Enumerate every oracle adapter / price source (N found / M
+  analysed). Each must reject a price set by a single fill (last trade, thin VWAP) or apply a
+  per-update deviation bound / a median of ≥ 2 independent sources. Grep
+  `last_price|last_trade|vwap|twap|deviation|max_change`; no bound in any eligibility read path is
+  a candidate (pattern-only ⇒ max Medium). Not a finding when spot is used for the *seize* leg
+  alongside EMA/TWAP for *eligibility* — that split is intentional; only an unbounded manipulable
+  price in the eligibility path is the finding.
+- **Ratio feeds composed with a base feed.** Classify every consumed feed as *ratio* (LST/base,
+  wrapped/underlying exchange rate) or *USD*, counting N/M in the report. A ratio feed must be
+  multiplied by a base/USD feed before it is used as a price; report a ratio feed consumed as
+  USD. Grep `exchange_rate|rate_feed|ratio|per_share` against the health-path price read. Cap:
+  Medium pattern-only; `likely` once the health-path read is traced end to end.
+- **Sanity band on feed changes.** Enumerate every feed-swap / oracle-config setter (grep
+  `set_oracle|set_feed|set_price_source|update_oracle`; N/M in the report). The new price must lie
+  within a bounded deviation of a secondary reference or the previous value, or the change must
+  be time-locked with the band checked at activation. Absence = a one-step arbitrary price =
+  candidate (blast-radius finding). The trust-model qualifier applies — an admin-only trigger
+  does not dismiss it; see the driver's **Trust qualification**. Pattern-only ⇒ max Medium.
+- **Coupled cap parameters move together.** Where rate-limited growth caps exist, enumerate the
+  coupled parameters (reference ratio, reference timestamp, growth rate; grep
+  `snapshot_ratio|snapshot_ts|ref_timestamp|max_growth|cap_rate`). One setter must update all of
+  them atomically; separately settable parameters are a desync candidate (the ratio and its
+  timestamp drift apart and the cap computes from a stale pair). Not a finding when a single
+  struct-replacing setter writes them together — but then **Config updates that clobber runtime
+  state** (below) applies; cite both.
 - **`10^decimals` normalization in every USD × raw-unit comparison** — and one canonical price
   representation across health, seizure, and settlement reads. A basis mismatch between any two
   of them mis-sizes liquidations by orders of magnitude.

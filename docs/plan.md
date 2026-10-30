@@ -301,14 +301,14 @@ the new oracle-integrations section (with S-1 findings) and the three C12 bullet
 mentions in playbooks are rewritten.
 **Depends on**: Chunk 0 (S-1 findings feed the Switchboard row).
 **Tasks**:
-1. [implement] In `$P/defi-lending-and-liquidation.md` under `## Market creation &
+1. [x] [implement] In `$P/defi-lending-and-liquidation.md` under `## Market creation &
    configuration validation`, add the bolded sub-block **Collateral listing quality** with
    CHK-C7-1 (caps vs liquidity depth; the three fixed outcomes incl. "depth unknown → every
    capped collateral reported as `needs_review` … could not be assessed", isolated-collateral
    carve-out) and CHK-C7-2 (same-asset borrow/re-supply bound, cross-ref to the driver's
    **Per-call vs. per-transaction limits**) — traces to coverage-checks.md §C7 CHK-C7-1,
    CHK-C7-2; c7_in_market_creation, c7_depth_unknown_path; AC-4
-2. [implement] In the same file under `## Oracle staleness & price representability`, after
+2. [x] [implement] In the same file under `## Oracle staleness & price representability`, after
    **No unpriced-asset $1 assumption**, add CHK-C7-3 (single-fill price rejected; seize-leg spot
    carve-out) and CHK-C8-1..3 (ratio feed composed with base feed; "sanity band"/"deviation" on
    feed swaps with the trust-model qualifier; coupled cap parameters updated "atomically"/
@@ -316,7 +316,7 @@ mentions in playbooks are rewritten.
    `## Self-liquidation & self-match` — traces to coverage-checks.md §C7 CHK-C7-3, §C8
    CHK-C8-1..3; c7_c8_in_oracle_staleness; AC-4, AC-5; perps-playbook.md
    §lending_margin_content_untouched
-3. [implement] In `$P/sui-native-pitfalls.md`, insert the new section `## Oracle integrations
+3. [x] [implement] In `$P/sui-native-pitfalls.md`, insert the new section `## Oracle integrations
    (Pyth / Switchboard / custom feeds)` directly after `## Cross-chain / bridge / ZK` (before
    `## PTB deliverability & production reachability`) with the "Applies when … max Medium"
    preamble, CHK-C9-1 with the three-row provider table (Pyth row names
@@ -326,14 +326,14 @@ mentions in playbooks are rewritten.
    carve-out; round trip within one staleness window; keeper-report plausibility bound
    cross-referencing **Signatures validated against live mutable policy**) — traces to
    coverage-checks.md §C9 CHK-C9-1..4; c9_section_and_table; AC-6 (section part), AC-14
-4. [implement] In `$P/sui-native-pitfalls.md` under `## Cross-chain / bridge / ZK`, after
+4. [x] [implement] In `$P/sui-native-pitfalls.md` under `## Cross-chain / bridge / ZK`, after
    **Fake bridge package object**, add CHK-C12-1 (verifier set size/threshold ≥ 2; 1-of-1 "no
    lower than High" after the two-gate check "regardless of operator reputation"; Medium
    pattern-only), CHK-C12-2 (uniqueness tied to full message hash/nullifier, cross-ref the
    existing **Nonce replay** bullet) and CHK-C12-3 (refund ≤ deposited; failed callbacks inert,
    cross-ref **Hard platform limits**) — traces to coverage-checks.md §C12 CHK-C12-1..3;
    c12_three_bullets; AC-8
-5. [implement] In `$P/verification-and-false-positives.md`, append four rows to the table under
+5. [x] [implement] In `$P/verification-and-false-positives.md`, append four rows to the table under
    `## Move-specific false-positive catalog ("looks vulnerable, is safe")` (CAT-1 fee-on-transfer
    / `sync`/`skim`, CAT-2 token-approval abuse, CAT-3 EVM proxy / delegatecall, CAT-4 off-chain
    TSS crypto; three columns; `CAT-n` ids not written), keep the Reentrancy row; and rewrite the
@@ -341,7 +341,7 @@ mentions in playbooks are rewritten.
    `verification-and-false-positives.md:173` at baseline) to the full-path form — traces to
    coverage-checks.md §n/a classes CAT-1..4; catalog_rows_added; AC-10; release-wiring.md
    §Companion wiring, no_bare_companion_mention (playbook share)
-6. [verify] Run the chunk's greps; check each new bullet ≤ 8 wrapped lines, has a bold lead-in
+6. [x] [verify] Run the chunk's greps; check each new bullet ≤ 8 wrapped lines, has a bold lead-in
    that is not a protocol name, states or inherits the Medium cap, names its enumeration set and
    its absence report — traces to coverage-checks.md §Cross-cutting rules; no_incident_as_subject,
    style_lengths; AC-11, AC-12

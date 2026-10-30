@@ -70,6 +70,10 @@ Each pattern is safe by default; the **bug condition** is when it becomes real:
 | Shared-object TOCTOU within one tx | Consensus serializes access | Cross-transaction ordering, or a check spanning two txns |
 | Missing denylist check in `transfer` | Validators block at execution | The cross-chain *receiving* epoch gap |
 | Sandwich attack | Sui has **no public mempool** | You can argue validator collusion or a predictable keeper tx |
+| Fee-on-transfer / reserve `sync`/`skim` mismatch | `Coin<T>`/`Balance<T>` amounts are exact; Move has no transfer hooks | (n/a — do not import EVM deflationary-token checks; the real Sui cousin is the donation vector in `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/defi-shares-and-vaults.md`) |
+| Token-approval abuse (EVM `approve`/`permit` drains) | No allowance model; objects move by ownership | (n/a — do not report "unlimited approval"; the Sui analogue is a `store`-able cap or receipt, covered by Phase 6.2) |
+| EVM proxy / delegatecall / implementation hijack | No delegatecall; upgrades go through `UpgradeCap` policy | (n/a — do not report proxy-storage-collision or `initialize`-on-implementation; report `UpgradeCap` custody and stale-package issues under 6.14 instead) |
+| Off-chain cryptography / TSS library flaws | Not Move code | (n/a — note as out of scope in the report's context section; do not fabricate a contract finding) |
 
 **Overflow carve-out (do not over-dismiss).** Overflow inside a *periodic accumulator* update is
 NOT dismissible as "Move just aborts": if the abort precedes the timestamp/index checkpoint, the
@@ -170,7 +174,8 @@ a documented tradeoff, not an open finding.
 - **`test_scenario` does not enforce native transfer-ability rules.** A harness more permissive
   than production gives false confidence that a flow is deliverable — a transfer that works in the
   scenario can be undeliverable in a real PTB. Cross-check against "PTB deliverability &
-  production reachability" in `sui-native-pitfalls.md`.
+  production reachability" in
+  `${CLAUDE_PLUGIN_ROOT}/agents/sui-move-auditor/sui-native-pitfalls.md`.
 - **One abort per `#[test]`.** A single test cannot witness two aborts — do not read test *counts*
   as scenario coverage.
 - **Events do not cross `next_tx` boundaries.** Place event assertions in the emitting

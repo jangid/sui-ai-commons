@@ -57,12 +57,75 @@ Several have permanent-brick or silent-auth-bypass failure modes with no EVM ana
 - **Fake bridge package object.** A VAA/attestation object accepted by type-name only is spoofed
   by deploying a homonymous-type package. Verify the object's *originating package address*, not
   just struct layout; validate guardian-set-index currency and emitter chain/address.
+- **Verifier quorum of independent operators.** Enumerate every attestation / guardian / DVN /
+  verifier set that authorises a message (N found / M analysed; grep
+  `threshold|quorum|guardian|verifier|signers`). Each set must have size ≥ 2 and threshold ≥ 2
+  *independent* operators. A 1-of-1 configuration is no lower than High once the two-gate check
+  passes (the set authorises value-moving messages; the value reachable with one key is bounded),
+  regardless of operator reputation — reputation is `[ZD-DOC]`-grade and cannot dismiss. Threshold
+  constant seen but path not traced ⇒ Medium. Not a finding when the 1-of-1 set authorises only
+  non-value-moving metadata, or the consumer verifies the config against a registry enforcing ≥ 2.
+- **Replay protection beyond a nonce.** Uniqueness must be tied to the full message content — the
+  hash of the signed payload stored as a nullifier — not a nonce or sequence number alone; a
+  stale sequence number must not let a validly signed packet be replayed or a fabricated one be
+  accepted. Grep `nonce|sequence|processed|consumed_hash`; a bridge receive path that checks only
+  a monotonic nonce is the candidate (pattern-only ⇒ max Medium). This is the bridge case of
+  **Nonce replay** above — apply that bullet's used-message-hash discipline here rather than
+  re-deriving it.
+- **Refund never exceeds deposit; failed callbacks are inert.** Every refund / deposit-resolution
+  path must pay ≤ the amount deposited, and a failed or resource-exhausted callback (abort,
+  child-object cap, event-size cap) must not leave a claim in an authorisable state. Enumerate the
+  refund / resolve / cancel entry points (grep `refund|resolve|cancel_deposit|release`; N/M in the
+  report); absence of a `≤ deposited` bound, or of a terminal-state write before the external leg,
+  is a candidate (pattern-only ⇒ max Medium). See **Hard platform limits** below for the
+  resource-exhaustion mechanism.
 - **Bridged-token `TreasuryCap` custody.** The mint cap for a wrapped `Coin<BridgedType>` must be
   held exclusively by the bridge; a shared object wrapping it without gating = anyone mints.
 - **ZK nullifier not enforced.** Proof verified but no on-chain nullifier `Table` checked/stored →
   the same proof replays as multiple votes/claims. Require `assert!(!contains(nullifiers, n))`
   before accept + insert after; nullifier derived from a private input, not submitter-controlled
   public input; table is shared, not owned.
+
+## Oracle integrations (Pyth / Switchboard / custom feeds)
+
+Applies when the target reads any price object it does not itself produce. Pattern-only
+candidates here are `needs_review` ⇒ max Medium.
+
+- **Authority of consumed oracle objects.** Enumerate every third-party price object type the
+  target reads (N found / M analysed; grep `PriceInfoObject|Aggregator|PriceFeed|price_oracle`).
+  For each, (i) read the oracle package's source to determine who can mutate the object's
+  authority / signer set / queue, and (ii) verify the target pins the expected object identity
+  and, where the type has one, the expected authority, in *every* read path — one unpinned read
+  path is a candidate (absence rule). `likely` requires the oracle source read (`[ZD-PROD-SOURCE]`);
+  without it the finding stays `needs_review`. Do not report a Pyth consumer for lacking an
+  authority pin (none exists) — only for a missing feed-ID, package, staleness or confidence check.
+
+| Provider object | Who can change what feeds it (source read 2026-10-30) | Consumer must pin | Authority check? |
+|---|---|---|---|
+| Pyth `PriceInfoObject` | No per-object mutable authority: updates enter only through the Pyth package's single-feed update path, which consumes a hot potato produced from a Wormhole-verified VAA whose emitter must pass the governance-controlled data-source check (`pyth.move`, `[ZD-PROD-SOURCE]`). | The **feed identity** — `price_info::get_price_identifier(...)` equals the expected feed ID — and the object's type originates from the canonical Pyth package address. The update path matches the identifier between update and object but does not check the object against the registry, so a homonymous or attacker-created object is the consumer's problem. | **No** — there is no authority to pin. Require a staleness check (`get_price_no_older_than`; its `abs_diff` treats a future timestamp as age) and a confidence-interval check instead. |
+| Switchboard On-Demand `Aggregator` | Per-feed `authority: address` and `queue: ID` fields (readers `authority()`, `queue()`, `has_authority()`). `set_authority` / `set_configs` are `public(package)` and reachable only via `actions/aggregator/aggregator_set_authority_action.move` and `aggregator_set_configs_action.move`, whose `validate` asserts `has_authority` (S-1, source read 2026-10-30, `[ZD-PROD-SOURCE]`). Oracle responses are accepted when signed by keys registered in the queue. `current_result()` returns the stored `CurrentResult` with **no** age gate. | Aggregator `object::id` **and** the expected `queue` ID (canonical mainnet queue) **and** the expected `authority`; consumer-side assertions on `min_sample_size`, `max_staleness_seconds`, `max_variance`, and its own age check of `CurrentResult` `timestamp_ms()` (also `min_timestamp_ms`, `stdev`, `range`) against `Clock`. | **Yes** — a mutable authority / queue is exactly the surface used to push a live feed ~100x off market (Full Sail, Virtue). |
+| Custom / in-house feed object | Read the module: find every function that writes `price`, `authority`, `signers`, `threshold`. | Object ID + every writer capability-gated, with the cap holder enumerated in Phase 2. | Yes. |
+
+- **Minimum oracle count and per-update move bound.** The target must require a minimum count /
+  consensus of independent inputs **and** bound the maximum price move per update unless a
+  second independent feed agrees (grep `min_sources|min_responses|max_deviation|max_change`).
+  Both absent = candidate; one absent = candidate naming which. Several feeds drawn from one
+  oracle network are one input, not consensus. Not a finding when the aggregator's own
+  `min_sample_size` is read and asserted by the consumer — that counts as the minimum-count
+  control.
+- **Oracle-priced round trip within one staleness window.** Deposit → price change → withdraw
+  inside one staleness window must not extract value: the required control is a deposit/withdraw
+  cooldown or a cumulative NAV-deviation circuit breaker that applies to oracle-priced deposits
+  and redemptions, not only harvests (generalizing the driver's 7.2 cumulative NAV breaker). Grep
+  `cooldown|lock_until|nav_deviation|circuit_breaker` in the deposit and redeem paths; absence is
+  a candidate. High requires a concrete sequence with the window length and the price move needed.
+- **Signed keeper reports carry a plausibility bound.** When prices arrive as signed keeper /
+  relayer payloads verified on-chain (grep `ed25519_verify|ecdsa|verify_signature` near a price
+  write), acceptance must check a plausibility bound on the value — deviation from the previous
+  value or from a second feed — not signer identity alone. Enumerate every signed-price entry
+  point (N/M in the report); a path that verifies the signer and writes the value unbounded is
+  the candidate (pattern-only ⇒ max Medium). Distinct from **Signatures validated against live
+  mutable policy** above: that bullet is about the signer set, this one about the payload value.
 
 ## PTB deliverability & production reachability
 
