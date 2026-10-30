@@ -248,7 +248,7 @@ headings, PB-1..5 and the known-good section, and passes every file-local perps-
 check.
 **Depends on**: Chunk 0 (ordering only; no content dependency — may run in parallel with Chunks 3 and 6–8).
 **Tasks**:
-1. [implement] Create `$F` with title `# Playbook — Perpetuals, Funding & Margin`, the "Load
+1. [x] [implement] Create `$F` with title `# Playbook — Perpetuals, Funding & Margin`, the "Load
    when …" opener containing the dual-load sentence with the full path to
    `defi-lending-and-liquidation.md`, the one-line preamble containing "max Medium" within the
    first 10 lines (its pointer to the verification playbook written as
@@ -257,13 +257,13 @@ check.
    traces to perps-playbook.md §File and load trigger, §Section skeleton;
    playbook_file_exists_in_companion_dir, load_when_opener_states_dual_load,
    six_fixed_headings_present_in_order, preamble_states_cap, known_good_section_present; AC-1
-2. [implement] Write PB-1 (`## Funding settlement ordering`: settle-first invariant, "before",
+2. [x] [implement] Write PB-1 (`## Funding settlement ordering`: settle-first invariant, "before",
    `Clock`, cross-refs with full paths to the lending `## Interest & accrual ordering` and
    staking `## Checkpoint & accumulator ordering (the core bugs)` headings, lazy-settle
    carve-out) and PB-2 (`## Funding-rate updates: permissioned or bounded`: writer enumeration
    with grep seeds, "funding-manipulation window", bounded-`poke` carve-out) — traces to
    perps-playbook.md §Check contracts PB-1, PB-2; pb1_settle_first, pb2_window_named; AC-3
-3. [implement] Write PB-3 (`## Self-trade and mark-price manipulation on thin books`: "owner
+3. [x] [implement] Write PB-3 (`## Self-trade and mark-price manipulation on thin books`: "owner
    addresses, not account IDs", smoothed/bounded mark price with "deviation", full-path
    cross-refs to the lending self-match bullet and the AMM `## Order books & matching loops`,
    oracle-only-mark carve-out) and PB-4 (`## Risk-parameter changes and open positions`:
@@ -271,7 +271,7 @@ check.
    the liquidation threshold, with a gap** and **Admin-origin latent user DoS**, bounded
    tighten-only carve-out) — traces to perps-playbook.md §Check contracts PB-3, PB-4;
    pb3_owner_not_account, pb4_transition; AC-3
-4. [implement] Write PB-5 (`## Fees, funding and collateral deltas as signed-value sinks`:
+4. [x] [implement] Write PB-5 (`## Fees, funding and collateral deltas as signed-value sinks`:
    sink list — taker/maker fee, integrator/builder fee codes, funding payments, realised PnL,
    collateral deltas — and a one-line pointer to the driver's 5.3a **Raw-bits stored,
    signed-read** check, no restatement of the C3 contract) and the
@@ -279,7 +279,7 @@ check.
    (lazy settle on read, trusted keeper setter → blast radius, bounded mark≠index premium,
    liquidation-profitability sanity gate) — traces to perps-playbook.md §Check contracts PB-5,
    §Known-good patterns section; pb5_points_to_driver, known_good_section_present; AC-3, AC-4
-5. [verify] Run the file-local perps-playbook.md checks and the decision-9 grep over `$F`
+5. [x] [verify] Run the file-local perps-playbook.md checks and the decision-9 grep over `$F`
    (every companion filename in `$F` carries the full path on the same line); count bullet
    lengths ≤ 8 lines; confirm this chunk did not touch `$P/defi-lending-and-liquidation.md`
    (`git diff --name-only "$BASE" -- $P/defi-lending-and-liquidation.md` is empty) — traces to perps-playbook.md §Automated (file-local checks),

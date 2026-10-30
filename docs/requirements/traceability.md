@@ -40,13 +40,13 @@ fills Verified.
 | REQ-COV-029 | coverage-checks.md | | | |
 | REQ-COV-030 | coverage-checks.md | | | |
 | REQ-COV-031 | coverage-checks.md | | | |
-| REQ-COV-032 | perps-playbook.md | | | |
-| REQ-COV-033 | perps-playbook.md | | | |
-| REQ-COV-034 | perps-playbook.md | | | |
-| REQ-COV-035 | perps-playbook.md | | | |
-| REQ-COV-036 | perps-playbook.md | | | |
-| REQ-COV-037 | perps-playbook.md | | | |
-| REQ-COV-038 | perps-playbook.md | | | |
+| REQ-COV-032 | perps-playbook.md | playbook_file_exists_in_companion_dir, load_when_opener_states_dual_load, six_fixed_headings_present_in_order, preamble_states_cap, known_good_section_present | defi-perps-and-margin.md (whole file: title, opener, preamble, six headings, known-good section) | |
+| REQ-COV-033 | perps-playbook.md | load_when_opener_states_dual_load, no_bare_companion_mention_perps, lending_margin_content_untouched (companion_table_row_present, phase_8b_row_names_both — Chunk 5) | defi-perps-and-margin.md opener (dual-load sentence); driver companion table + Phase 8B row — Chunk 5, open | |
+| REQ-COV-034 | perps-playbook.md | pb1_settle_first | defi-perps-and-margin.md §Funding settlement ordering | |
+| REQ-COV-035 | perps-playbook.md | pb2_window_named | defi-perps-and-margin.md §Funding-rate updates: permissioned or bounded | |
+| REQ-COV-036 | perps-playbook.md | pb3_owner_not_account | defi-perps-and-margin.md §Self-trade and mark-price manipulation on thin books | |
+| REQ-COV-037 | perps-playbook.md | pb4_transition | defi-perps-and-margin.md §Risk-parameter changes and open positions | |
+| REQ-COV-038 | perps-playbook.md | pb5_points_to_driver | defi-perps-and-margin.md §Fees, funding and collateral deltas as signed-value sinks | |
 | REQ-COV-039 | coverage-checks.md | | | |
 | REQ-COV-040 | coverage-checks.md | | | |
 | REQ-COV-041 | fixtures.md | | | |
