@@ -597,7 +597,7 @@ matrix's Test and Implementation columns are filled for all 72 live rows; the PR
 orchestrator needs exists.
 **Depends on**: Chunk 1, Chunk 5, Chunk 8.
 **Tasks**:
-1. [verify] Re-run the complete `### Automated` lists of exploit-sources.md (10),
+1. [x] [verify] Re-run the complete `### Automated` lists of exploit-sources.md (10),
    coverage-checks.md (18, `plugin_version_bumped_in_same_change` read as "version is 2.3.0 in
    the tree"), perps-playbook.md (14; `lending_margin_content_untouched` against `main`),
    fixtures.md (9) and release-wiring.md (the 13 checks that do not need commit history or a PR)
@@ -605,18 +605,49 @@ orchestrator needs exists.
    command there; the list is the end-state form of the Chunk 1–8 gates, not their union), and
    record a pass/fail line per check id — traces to overview.md §Verification; exploit-sources.md, coverage-checks.md,
    perps-playbook.md, fixtures.md, release-wiring.md §Automated (every check id)
-2. [verify] Re-run the six overview.md spec-set checks (`every_live_requirement_owned_once`,
+   - **Results (Chunk 9)** (gate script run 2026-10-30 on HEAD 2fbfb08 = BASE; one line per check id):
+     version_is_2_3_0 pass; no_agents_or_commands_field pass; plugin_version_bumped_in_same_change pass;
+     manifests_parse pass; marketplace_unchanged pass (vs `main` and vs pre-cycle ba39b14);
+     no_sibling_plugin_dir pass; playbook_in_companion_dir pass; playbook_file_exists_in_companion_dir pass;
+     no_relative_or_repo_paths_in_plugin pass; plugin_root_prefix_present pass;
+     no_bare_companion_mention pass; no_bare_companion_mention_perps pass; companion_table_all_full_path pass;
+     companion_table_row_present pass; sui_native_load_condition_mentions_oracle pass; phase_8b_row_names_both pass;
+     five_enumeration_sites_updated pass; claude_md_mentions_fixtures_and_sources pass;
+     headings_exist_verbatim pass; c3_bullets_in_5_3a PASS (3 new bullets vs pre-cycle commit ba39b14; literal `main` form reads 0 because Chunks 0–8 were committed on main);
+     c6_three_items_in_6_14 pass; c6_floor_stated pass; c11_trigger_and_five_items pass; c7_4_refresh_in_7_2 pass;
+     c9_driver_load_instruction pass; c19_step_10 pass; c7_in_market_creation pass; c7_depth_unknown_path pass;
+     c7_c8_in_oracle_staleness pass; c9_section_and_table pass (Pyth row read: feed-identity pin, no authority pin);
+     c12_three_bullets pass; catalog_rows_added pass; no_incident_as_subject pass (incident names only in parentheses);
+     style_lengths pass (driver bullets ≤ 6 lines, playbook bullets ≤ 8);
+     load_when_opener_states_dual_load pass; six_fixed_headings_present_in_order pass; preamble_states_cap pass;
+     pb1_settle_first pass; pb2_window_named pass; pb3_owner_not_account pass; pb4_transition pass;
+     pb5_points_to_driver pass; known_good_section_present pass; lending_margin_content_untouched pass (vs `main` and vs ba39b14);
+     sources_file_exists_outside_plugins pass; frontmatter_has_cutoff_and_spike pass; eleven_sources_present_in_rank_order pass;
+     every_source_has_full_field_block pass; last_checked_is_date_or_never pass;
+     primary_set_names_three_sources_with_filter_field pass; retry_list_covers_unverified_sources pass;
+     procedure_has_required_steps_in_order pass; strict_after_rule_stated pass; seven-section order pass; no_automation_shipped pass;
+     all_nine_fixture_dirs_exist pass; each_fixture_builds_clean pass (9/9, `sui 1.81.1`, rc=0, no warning/error lines);
+     each_fixture_has_move_toml_lock_readme_sources pass; move_toml_has_no_published_at_and_edition_2024 pass;
+     dependency_variant_uniform pass (0 of 9 `[dependencies]`); readme_headings_fixed pass; readme_cites_valid_ids pass;
+     index_table_complete pass; 31-id exactly-once + no CHK-C19-1 pass; no `warnings = "allow"` pass;
+     no_plugin_files_touched_by_fixture_commits informational (confirmed at PR review from the commit split).
+     Task 2 — every_live_requirement_owned_once pass (72 live rows); traceability_spec_column_filled pass;
+     all_specs_have_required_sections pass; landing_headings_consistent_across_specs pass (specs + implemented files);
+     fixture_slugs_consistent pass; high_uncertainty_sections_have_spike_and_fallback pass (manual: S-1 ≤ 5 tool calls
+     + fallback wording; S-2 fallback explicit dependency).
+     This chunk — traceability filled pass (0 empty live cells); pr-body sections pass; own-changes-only pass.
+2. [x] [verify] Re-run the six overview.md spec-set checks (`every_live_requirement_owned_once`,
    `traceability_spec_column_filled`, `all_specs_have_required_sections`,
    `landing_headings_consistent_across_specs` — now also against the implemented files with
    `grep -F`, `fixture_slugs_consistent`, `high_uncertainty_sections_have_spike_and_fallback`)
    — traces to overview.md §Automated (all six)
-3. [implement] Fill any still-empty `Test` / `Implementation` cell in
+3. [x] [implement] Fill any still-empty `Test` / `Implementation` cell in
    `docs/requirements/traceability.md` for the 72 live rows (Implementation = file → heading or
    fixture slug; Test = check id(s) and/or fixture slug; REQ-REL-007 stays empty) and confirm
    with `awk -F'|' '/^\| REQ-/ && $2 !~ /Deprecated/ && ($4 ~ /^ *$/ || $5 ~ /^ *$/)' docs/requirements/traceability.md | wc -l` = 0 (restricted to data rows so frontmatter, title and prose lines cannot count) — traces to
    coverage-checks.md §Content-level evidence rule (REQ-COV-040); overview.md
    §traceability_spec_column_filled
-4. [implement] Write `docs/handoff/pr-body.md` with the six fixed PR sections: Why (RS-001
+4. [x] [implement] Write `docs/handoff/pr-body.md` with the six fixed PR sections: Why (RS-001
    summary, cutoff 2026-10-30); Audit-behaviour rationale table `Class | Check IDs | File →
    heading | What the auditor now does differently | Incident(s) it would have caught` with rows
    C3, C6, C7, C8, C9, C11, C12, C19, perps/C17/C20; the REQ-COV-040 table `CHK-ID | file |
@@ -626,19 +657,19 @@ orchestrator needs exists.
    `no_bare_companion_mention` clean, any wrapped name/path lines confirmed by eye) — traces to
    release-wiring.md §Branch and PR; pr_exists_to_main_with_rationale_table (body content);
    AC-8; coverage-checks.md §Content-level evidence rule; AC-13
-5. [verify] Record for the orchestrator the commit-shape requirements it must satisfy at
+5. [x] [verify] Record for the orchestrator the commit-shape requirements it must satisfy at
    commit time (`feat(sui-move-auditor): <summary> (v2.3.0)` on the commit touching
    `plugin.json` together with at least one `plugins/sui-ai/agents/` file; docs-only,
    fixture-only and CLAUDE.md-only commits leave `plugin.json` unchanged; `feature/` branch; PR
    to `main` via `gh pr create` with `docs/handoff/pr-body.md`) as a closing note in
    `docs/handoff/pr-body.md` — traces to release-wiring.md §bump_commit_subject_names_version,
    bump_and_content_same_commit, non_plugin_commits_do_not_bump, branch_prefix; AC-1, AC-8, AC-10
-6. [verify] Optional (not a gate; operator decision 8): run `sui-ai:sui-move-auditor` against
+6. [x] [verify] Optional (not a gate; operator decision 8): run `sui-ai:sui-move-auditor` against
    `tests/fixtures/c03-signed-value-reinterpretation`, `c09-oracle-authority-unpinned`,
    `c11-governance-capture` and `c20-perps-market-manipulation`, confirm candidates at the
    README-named locations with severity ≤ Medium and that both lending and perps playbooks are
    reported loaded for c20; record the result in the PR body's Non-plugin artifacts section —
-   traces to coverage-checks.md §Manual; perps-playbook.md §Manual; fixtures.md §Manual
+   traces to coverage-checks.md §Manual; perps-playbook.md §Manual; fixtures.md §Manual — **not run**: a non-interactive subagent cannot dispatch the auditor agent; left for the operator, expected candidate locations recorded in `docs/handoff/pr-body.md` §Non-plugin artifacts
 **Entry criteria**: Chunks 1, 5 and 8 closed.
 **Exit criteria**: every check id in task 1 and 2 reports pass; traceability has no empty
 Test/Implementation cell on live rows; `docs/handoff/pr-body.md` exists with six sections.
